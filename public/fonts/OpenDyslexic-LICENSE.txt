@@ -1,0 +1,18 @@
+OpenDyslexic
+============
+
+Typeface designed to increase readability for readers with dyslexia.
+Created by Abelardo Gonzalez. https://opendyslexic.org
+
+Files in this directory:
+  OpenDyslexic-Regular.woff  (Version 2.001)
+  OpenDyslexic-Bold.woff     (Version 2.001)
+
+License
+-------
+Original fonts are © Bitstream. OpenDyslexic changes and additional glyphs by
+Abelardo Gonzalez are licensed under a Creative Commons Attribution 3.0 Unported
+License (CC-BY 3.0): https://creativecommons.org/licenses/by/3.0/
+
+This bundled build is used unmodified for the optional dyslexia-friendly typing
+mode in vsemadeseti.
