@@ -17,6 +17,12 @@
     Cross-Origin-Opener-Policy = "same-origin"
     Cross-Origin-Embedder-Policy = "require-corp"
 
+# Never long-cache the service worker itself, so app updates propagate promptly.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
 # Hash-routed SPA: serve index.html for any path that isn't a real file.
 # (Existing static files — JS/WASM/fonts — are served before this rewrite.)
 [[redirects]]

@@ -12,7 +12,9 @@ See [`SPEC.md`](./SPEC.md) for the full product decisions.
 - **[Evolu](https://www.evolu.dev) 7** — local-first SQLite (OPFS) in the browser;
   data is local by default (`transports: []`), portable via a recovery phrase.
 - **Tailwind v4** (design tokens) + a little **Framer Motion**
-- Zero backend. Installable PWA, works offline.
+- Zero backend. Installable **PWA** — a Workbox service worker
+  ([`vite-plugin-pwa`](https://vite-pwa-org.netlify.app)) precaches the app shell
+  (incl. the SQLite WASM + Evolu workers), so it boots fully **offline**.
 
 ## Develop
 
@@ -63,5 +65,5 @@ that restyles the whole app — self-hosted so it works offline.
 
 See the "Open / deferred" section of `SPEC.md` and the notes in code:
 live cross-device sync (currently local-only + recovery-phrase restore),
-service-worker offline caching, English/other layouts, the full Czech corpus,
-and verification of some punctuation/AltGr/dead-key layout details.
+English/other layouts, the full Czech corpus, and verification of some
+punctuation/AltGr/dead-key layout details.
