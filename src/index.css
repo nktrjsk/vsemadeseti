@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+/* ---- Design tokens: calm, warm, all-ages ---------------------------------
+   Light + dark themes via [data-theme]. Text size via [data-textsize].
+   One soft accent (sage green) + warm neutrals. Finger zones get their own
+   hues, but never carry meaning by hue alone (see Keyboard patterns).        */
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-type: "Lexend", "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Self-hosted so the dyslexia mode also works offline (this is a local-first PWA).
+   OpenDyslexic covers Latin Extended-A, so all Czech diacritics render. */
+@font-face {
+  font-family: "OpenDyslexic";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/OpenDyslexic-Regular.woff") format("woff");
+}
+@font-face {
+  font-family: "OpenDyslexic";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/OpenDyslexic-Bold.woff") format("woff");
+}
+
+:root,
+[data-theme="light"] {
+  --bg: #faf7f2;
+  --bg-soft: #f3eee6;
+  --surface: #ffffff;
+  --surface-2: #f7f3ec;
+  --border: #e7ded1;
+  --text: #2e2a24;
+  --text-soft: #6f675c;
+  --text-faint: #a39a8c;
+  --accent: #5b8a72;
+  --accent-soft: #e4efe7;
+  --accent-strong: #426a56;
+  --good: #5b8a72;
+  --gentle: #c9b977; /* used for "try again", warm not alarming */
+  --shadow: 0 1px 2px rgba(46, 42, 36, 0.04), 0 8px 24px rgba(46, 42, 36, 0.06);
+}
+
+[data-theme="dark"] {
+  --bg: #1a1816;
+  --bg-soft: #211e1b;
+  --surface: #24211d;
+  --surface-2: #2b2723;
+  --border: #38332d;
+  --text: #efe9e0;
+  --text-soft: #b6ac9e;
+  --text-faint: #7c7468;
+  --accent: #7fb295;
+  --accent-soft: #2a3a31;
+  --accent-strong: #9cc8ae;
+  --good: #7fb295;
+  --gentle: #d8c989;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+html {
+  font-size: 16px;
+}
+[data-textsize="large"] html,
+html[data-textsize="large"] {
+  font-size: 18px;
+}
+html[data-textsize="larger"] {
+  font-size: 20.5px;
+}
+
+[data-dyslexia="on"] {
+  --font-sans: "OpenDyslexic", "Comic Sans MS", "Inter", sans-serif;
+  --font-type: "OpenDyslexic", "Comic Sans MS", "Lexend", sans-serif;
+  letter-spacing: 0.03em;
+  word-spacing: 0.06em;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: var(--accent-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* gentle focus ring, never harsh */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}

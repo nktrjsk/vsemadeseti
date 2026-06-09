@@ -1,0 +1,18 @@
+{
+  "name": "Vsemadeseti — piš všemi deseti",
+  "short_name": "vsemadeseti",
+  "description": "Klidný, vstřícný kurz psaní všemi deseti. Vlastním tempem, bez soutěžení.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#faf7f2",
+  "theme_color": "#5b8a72",
+  "lang": "cs",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
