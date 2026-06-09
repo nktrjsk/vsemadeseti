@@ -1,0 +1,25 @@
+# Netlify deployment config for vsemadeseti (Vite + React SPA).
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  # Vite 8 / TypeScript 6 need a recent Node; pin an LTS for reproducible builds.
+  NODE_VERSION = "22"
+
+# Cross-origin isolation — required for Evolu's OPFS/SQLite worker
+# (SharedArrayBuffer). Mirrors the Vite dev-server headers in vite.config.ts;
+# without these the local database fails to initialise in production.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cross-Origin-Opener-Policy = "same-origin"
+    Cross-Origin-Embedder-Policy = "require-corp"
+
+# Hash-routed SPA: serve index.html for any path that isn't a real file.
+# (Existing static files — JS/WASM/fonts — are served before this rewrite.)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
