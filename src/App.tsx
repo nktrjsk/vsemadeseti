@@ -3,6 +3,7 @@ import { evolu } from "./db/evolu";
 import { parseRoute, useRoute } from "./lib/router";
 import { useSettings } from "./ui/settings";
 import { AppShell } from "./components/AppShell";
+import { ReloadPrompt } from "./components/ReloadPrompt";
 import { Onboarding } from "./screens/Onboarding";
 import { CoursePath } from "./screens/CoursePath";
 import { LessonScreen } from "./screens/LessonScreen";
@@ -21,6 +22,7 @@ export function App() {
     return (
       <EvoluProvider value={evolu}>
         <Onboarding />
+        <ReloadPrompt />
       </EvoluProvider>
     );
   }
@@ -53,6 +55,7 @@ export function App() {
   return (
     <EvoluProvider value={evolu}>
       <AppShell>{screen}</AppShell>
+      <ReloadPrompt />
     </EvoluProvider>
   );
 }

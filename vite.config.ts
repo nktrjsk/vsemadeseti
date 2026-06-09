@@ -10,8 +10,9 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
-      registerType: "autoUpdate",
-      injectRegister: "auto",
+      // Prompt the user before applying an update (see components/ReloadPrompt).
+      registerType: "prompt",
+      injectRegister: false,
       // Keep the hand-written public/manifest.webmanifest; only generate the SW.
       manifest: false,
       workbox: {
