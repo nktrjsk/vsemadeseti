@@ -1,9 +1,18 @@
 import type { CharItem } from "../engine/useTypingSession";
 
 /* Renders the drill text with gentle per-character status. Errors are warm
- * (amber), never alarming red. The current position shows a soft caret. */
+ * (amber), never alarming red. The current position shows a soft caret.
+ * With `showEnter`, line breaks render a typeable ↵ glyph at the row end. */
 
-export function TextDisplay({ items, justErrored }: { items: CharItem[]; justErrored: boolean }) {
+export function TextDisplay({
+  items,
+  justErrored,
+  showEnter = false,
+}: {
+  items: CharItem[];
+  justErrored: boolean;
+  showEnter?: boolean;
+}) {
   return (
     <div
       style={{
@@ -19,7 +28,8 @@ export function TextDisplay({ items, justErrored }: { items: CharItem[]; justErr
       }}
     >
       {items.map((it, i) => {
-        if (it.char === "\n") return <br key={i} />;
+        const isNewline = it.char === "\n";
+        if (isNewline && !showEnter) return <br key={i} />;
         const isSpace = it.char === " ";
         let color = "var(--text-faint)";
         let background = "transparent";
@@ -35,9 +45,9 @@ export function TextDisplay({ items, justErrored }: { items: CharItem[]; justErr
             ? "color-mix(in srgb, var(--gentle) 28%, transparent)"
             : "var(--accent-soft)";
         }
-        return (
+        const span = (
           <span
-            key={i}
+            key={isNewline ? undefined : i}
             style={{
               color,
               background,
@@ -45,12 +55,21 @@ export function TextDisplay({ items, justErrored }: { items: CharItem[]; justErr
               borderRadius: 4,
               padding: isSpace ? "0 1px" : "0 1.5px",
               transition: "background .12s ease, color .12s ease",
+              ...(isNewline ? { fontSize: "0.75em", opacity: 0.85 } : {}),
             }}
           >
-            {isSpace ? "·".replace("·", " ") : it.char}
-            {isSpace && it.status === "current" ? "" : ""}
+            {isNewline ? "↵" : it.char}
           </span>
         );
+        if (isNewline) {
+          return (
+            <span key={i}>
+              {span}
+              <br />
+            </span>
+          );
+        }
+        return span;
       })}
     </div>
   );

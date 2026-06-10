@@ -33,8 +33,9 @@ export function recordAttempt(
     evolu.insert("practiceDay", { day });
   }
 
+  // "\n" (Enter) is persisted too; weak-key drills filter whitespace out
   for (const [char, t] of summary.keyTally) {
-    if (!char || char === "\n") continue;
+    if (!char) continue;
     const existing = existingKeyStats.find((k) => k.char === char);
     if (existing) {
       evolu.update("keyStat", {

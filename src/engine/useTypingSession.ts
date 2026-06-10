@@ -9,8 +9,9 @@ import { sound } from "../lib/sound";
  * it as a single insertText whose data is the composed character. We
  * preventDefault so the field never actually mutates.
  *
- * Newlines in the target are visual only — they are auto-skipped, so multi-line
- * drills don't require pressing Enter. */
+ * Newlines in the target are auto-skipped (visual only) by default; with
+ * `requireEnter` they become real expected characters — the learner must press
+ * Enter at the end of each row and mistakes there count like any other key. */
 
 export type CharStatus = "pending" | "current" | "correct" | "wrong";
 
@@ -40,11 +41,15 @@ export interface TypingState {
 export interface TypingOptions {
   target: string;
   errorMode: ErrorMode;
+  /** newlines must be typed with Enter instead of being auto-skipped */
+  requireEnter?: boolean;
   onFinish?: (summary: {
     accuracy: number;
     cpm: number;
     errors: number;
     durationMs: number;
+    /** typeable length of the target under the current Enter rule */
+    chars: number;
     keyTally: Map<string, { hits: number; misses: number }>;
   }) => void;
 }
@@ -55,10 +60,15 @@ function skipNewlines(target: string, from: number): number {
   return i;
 }
 
-export function useTypingSession({ target, errorMode, onFinish }: TypingOptions): TypingState {
+export function useTypingSession({
+  target,
+  errorMode,
+  requireEnter = false,
+  onFinish,
+}: TypingOptions): TypingState {
   const ref = useRef<HTMLTextAreaElement | null>(null);
 
-  const [pos, setPos] = useState(() => skipNewlines(target, 0));
+  const [pos, setPos] = useState(() => (requireEnter ? 0 : skipNewlines(target, 0)));
   const [wrongSet, setWrongSet] = useState<Set<number>>(() => new Set());
   const [finished, setFinished] = useState(false);
   const [justErrored, setJustErrored] = useState(false);
@@ -72,7 +82,7 @@ export function useTypingSession({ target, errorMode, onFinish }: TypingOptions)
   const errorFlashTimer = useRef<number | null>(null);
 
   const reset = useCallback(() => {
-    setPos(skipNewlines(target, 0));
+    setPos(requireEnter ? 0 : skipNewlines(target, 0));
     setWrongSet(new Set());
     setFinished(false);
     setErrors(0);
@@ -82,7 +92,7 @@ export function useTypingSession({ target, errorMode, onFinish }: TypingOptions)
     endRef.current = null;
     tally.current = new Map();
     ref.current?.focus();
-  }, [target]);
+  }, [target, requireEnter]);
 
   // reset whenever the target changes
   useEffect(() => {
@@ -101,11 +111,11 @@ export function useTypingSession({ target, errorMode, onFinish }: TypingOptions)
     setFinished(true);
     sound.done();
     const durationMs = startRef.current != null ? endRef.current - startRef.current : 0;
-    const totalCorrect = target.replace(/\n/g, "").length;
+    const totalCorrect = requireEnter ? target.length : target.replace(/\n/g, "").length;
     const acc = totalCorrect + errors > 0 ? totalCorrect / (totalCorrect + errors) : 1;
     const cpm = durationMs > 0 ? (totalCorrect / durationMs) * 60000 : 0;
-    onFinish?.({ accuracy: acc, cpm, errors, durationMs, keyTally: tally.current });
-  }, [target, errors, onFinish]);
+    onFinish?.({ accuracy: acc, cpm, errors, durationMs, chars: totalCorrect, keyTally: tally.current });
+  }, [target, requireEnter, errors, onFinish]);
 
   const handleChar = useCallback(
     (input: string) => {
@@ -119,7 +129,7 @@ export function useTypingSession({ target, errorMode, onFinish }: TypingOptions)
         bump(expected, true);
         setCorrect((c) => c + 1);
         sound.key();
-        const next = skipNewlines(target, pos + 1);
+        const next = requireEnter ? pos + 1 : skipNewlines(target, pos + 1);
         if (next >= target.length) {
           setPos(next);
           finish();
@@ -135,21 +145,21 @@ export function useTypingSession({ target, errorMode, onFinish }: TypingOptions)
         errorFlashTimer.current = window.setTimeout(() => setJustErrored(false), 320);
         if (errorMode === "flow") {
           setWrongSet((s) => new Set(s).add(pos));
-          const next = skipNewlines(target, pos + 1);
+          const next = requireEnter ? pos + 1 : skipNewlines(target, pos + 1);
           setPos(next);
           if (next >= target.length) finish();
         }
         // block mode: do not advance
       }
     },
-    [finished, target, pos, bump, finish, errorMode],
+    [finished, target, pos, bump, finish, errorMode, requireEnter],
   );
 
   const handleBackspace = useCallback(() => {
     if (errorMode !== "flow" || finished) return;
     setPos((p) => {
       let q = p - 1;
-      while (q > 0 && target[q] === "\n") q--;
+      if (!requireEnter) while (q > 0 && target[q] === "\n") q--;
       if (q < 0) return p;
       setWrongSet((s) => {
         const n = new Set(s);
@@ -158,7 +168,7 @@ export function useTypingSession({ target, errorMode, onFinish }: TypingOptions)
       });
       return q;
     });
-  }, [errorMode, finished, target]);
+  }, [errorMode, finished, target, requireEnter]);
 
   // attach beforeinput listener to the hidden field
   useEffect(() => {

@@ -168,6 +168,7 @@ for (const key of ALL_KEYS) {
 
 export function charInfo(ch: string): CharInfo | undefined {
   if (ch === " ") return CHAR_MAP.get(" ");
+  if (ch === "\n") return CHAR_MAP.get("⏎"); // Enter at end of a drill row
   return CHAR_MAP.get(ch);
 }
 
