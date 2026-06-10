@@ -2,15 +2,18 @@ import { useMemo, useRef, useState } from "react";
 import { useQuery } from "@evolu/react";
 import { attemptsQuery, keyStatsQuery, practiceDaysQuery } from "../db/evolu";
 import { recordAttempt, type KeyStatRowFull } from "../db/record";
-import { buildSteps, lessonById, LESSONS, stageOf } from "../data/curriculum";
+import { lessonById, LESSONS, stageOf } from "../data/curriculum";
+import { buildSteps } from "../data/generator";
 import { TypingArea, type RunSummary, type Segment } from "../components/TypingArea";
 import { Button, Card, Pill } from "../ui/primitives";
 import { FingerLegend } from "../components/HandsHint";
 import { navigate } from "../lib/router";
-import { bestAccuracyByLesson } from "../lib/progress";
+import { bestAccuracyByLesson, weakKeys } from "../lib/progress";
+import { DRILL_LINES, useSettings } from "../ui/settings";
 
 export function LessonScreen({ lessonId }: { lessonId: string }) {
   const lesson = lessonById(lessonId);
+  const settings = useSettings();
   const attempts = useQuery(attemptsQuery);
   const keyStats = useQuery(keyStatsQuery) as unknown as KeyStatRowFull[];
   const days = useQuery(practiceDaysQuery);
@@ -20,10 +23,25 @@ export function LessonScreen({ lessonId }: { lessonId: string }) {
   const prevBestRef = useRef<number>(best.get(lessonId) ?? 0);
 
   const [summary, setSummary] = useState<RunSummary | null>(null);
+  // bumping this regenerates the drill — every attempt gets fresh random content
+  const [attempt, setAttempt] = useState(0);
+
+  // read key stats through a ref so a stats write mid-run can't regenerate text
+  const statsRef = useRef<KeyStatRowFull[]>([]);
+  statsRef.current = keyStats ?? [];
 
   const segments: Segment[] = useMemo(
-    () => (lesson ? buildSteps(lesson).map((s) => ({ label: s.label, text: s.text })) : []),
-    [lesson],
+    () =>
+      lesson
+        ? buildSteps(lesson, {
+            maxGroupLen: settings.maxGroupLen,
+            linesPerPhase: DRILL_LINES[settings.drillLength],
+            weakKeys: weakKeys(statsRef.current),
+            alternateHands: settings.handAlternation,
+          }).map((s) => ({ label: s.label, text: s.text }))
+        : [],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [lesson, attempt, settings.maxGroupLen, settings.drillLength, settings.handAlternation],
   );
 
   if (!lesson) {
@@ -63,6 +81,7 @@ export function LessonScreen({ lessonId }: { lessonId: string }) {
           onReplay={() => {
             prevBestRef.current = Math.max(prevBestRef.current, summary.accuracy);
             setSummary(null);
+            setAttempt((a) => a + 1); // fresh random content for the new attempt
           }}
           onNext={
             nextLesson
@@ -75,7 +94,7 @@ export function LessonScreen({ lessonId }: { lessonId: string }) {
         />
       ) : (
         <Card>
-          <TypingArea segments={segments} onComplete={handleComplete} />
+          <TypingArea segments={segments} onComplete={handleComplete} resetKey={`${lessonId}:${attempt}`} />
           <div style={{ marginTop: 18, paddingTop: 14, borderTop: "1px solid var(--border)" }}>
             <FingerLegend />
           </div>

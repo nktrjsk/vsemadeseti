@@ -37,6 +37,13 @@ export const PHRASES: string[] = [
 ];
 
 export const SENTENCES: string[] = [
+  // diacritics-free — typeable from the caps stage on (punctuation is
+  // stripped by the generator until it is learned)
+  "Jana nese vodu do domu.",
+  "Adam a Eva jdou do lesa.",
+  "Pavel veze seno na voze.",
+  "Eva maluje psa a kolo.",
+  "Husy plavou pod mostem.",
   "Ráno svítí slunce nad tichou řekou.",
   "Učím se psát všemi deseti prsty.",
   "Každý den udělám malý krok dopředu.",

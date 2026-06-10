@@ -3,9 +3,11 @@ import { useQuery } from "@evolu/react";
 import { keyStatsQuery } from "../db/evolu";
 import { weakKeys } from "../lib/progress";
 import { filterByChars, WORDS } from "../data/words";
+import { randomGroups } from "../data/generator";
 import { TypingArea, type Segment } from "../components/TypingArea";
 import { Button, Card, Pill } from "../ui/primitives";
 import { navigate } from "../lib/router";
+import { DRILL_LINES, useSettings } from "../ui/settings";
 
 /* Targeted weak-key drills — turns your most-missed keys into a short, gentle
  * practice. Mistakes become care, not punishment. */
@@ -13,21 +15,40 @@ import { navigate } from "../lib/router";
 export function Weak() {
   const stats = useQuery(keyStatsQuery) as unknown as Array<{ char: string; hits: number; misses: number }>;
   const weak = useMemo(() => weakKeys(stats), [stats]);
+  const settings = useSettings();
 
   const segments: Segment[] = useMemo(() => {
     if (weak.length === 0) return [];
     const focus = weak.slice(0, 5);
+    const lines = DRILL_LINES[settings.drillLength];
     const segs: Segment[] = [];
-    segs.push({ label: "Zaměř se", text: focus.map((k) => `${k}${k}${k}`).join("  ") });
-    const bigrams: string[] = [];
-    for (const a of focus) for (const b of focus) if (a !== b) bigrams.push(a + b);
-    if (bigrams.length) segs.push({ label: "Spojení", text: bigrams.slice(0, 20).join(" ") });
+    segs.push({
+      label: "Zaměř se",
+      text: randomGroups(focus, {
+        maxGroupLen: settings.maxGroupLen,
+        lines,
+        focus,
+        alternateHands: settings.handAlternation,
+      }),
+    });
+    const mixPool = [...new Set([..."fjdksla", ...focus])];
+    segs.push({
+      label: "Spojení",
+      text: randomGroups(mixPool, {
+        maxGroupLen: settings.maxGroupLen,
+        lines,
+        focus,
+        alternateHands: settings.handAlternation,
+        weight: (c) => (focus.includes(c) ? 3 : 1),
+      }),
+    });
     const words = filterByChars(WORDS, new Set([..."asdfghjkleiou", ...weak])).filter((w) =>
       focus.some((k) => w.includes(k)),
     );
     if (words.length >= 4) segs.push({ label: "Slova", text: words.slice(0, 14).join(" ") });
     return segs;
-  }, [weak]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [weak, settings.maxGroupLen, settings.drillLength, settings.handAlternation]);
 
   if (weak.length === 0) {
     return (
@@ -73,7 +94,7 @@ export function Weak() {
         </div>
       </Card>
       <Card>
-        <TypingArea segments={segments} />
+        <TypingArea segments={segments} resetKey="weak" />
       </Card>
     </div>
   );
