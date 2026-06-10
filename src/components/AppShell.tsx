@@ -46,7 +46,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", cursor: "pointer" }}
           >
             <span style={{ fontSize: "1.3rem" }}>🌱</span>
-            <span style={{ fontWeight: 700, fontSize: "1.1rem", color: "var(--text)" }}>vsemadeseti</span>
+            <span style={{ fontWeight: 700, fontSize: "1.1rem", color: "var(--text)" }}>Všema deseti</span>
           </button>
           <nav style={{ display: "flex", gap: 2 }}>
             {NAV.map(([path, label, icon]) => (
