@@ -6,6 +6,14 @@ import type { KeyboardLayout } from "../lib/platform";
 export type Theme = "system" | "light" | "dark";
 export type TextSize = "normal" | "large" | "larger";
 export type ErrorMode = "block" | "flow";
+export type DrillLength = "short" | "normal" | "long";
+
+/** Lines per drill phase for each length preset. */
+export const DRILL_LINES: Record<DrillLength, number> = {
+  short: 1,
+  normal: 2,
+  long: 4,
+};
 
 export interface Scaffold {
   keyboard: boolean;
@@ -24,6 +32,13 @@ export interface Settings {
   keyboardLayout: KeyboardLayout;
   scaffold: Scaffold;
   onboarded: boolean;
+  /** longest random drill group; each group is 1..maxGroupLen chars */
+  maxGroupLen: number;
+  /** require pressing Enter at the end of each drill row */
+  enterAtEol: boolean;
+  drillLength: DrillLength;
+  /** prefer alternating hands/fingers inside groups (off = pure random) */
+  handAlternation: boolean;
 }
 
 const DEFAULTS: Settings = {
@@ -36,6 +51,10 @@ const DEFAULTS: Settings = {
   keyboardLayout: "auto",
   scaffold: { keyboard: true, fingerColors: true, nextKey: true, hands: true },
   onboarded: false,
+  maxGroupLen: 4,
+  enterAtEol: true,
+  drillLength: "normal",
+  handAlternation: true,
 };
 
 const KEY = "vsemadeseti.settings";

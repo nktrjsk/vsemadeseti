@@ -24,7 +24,15 @@ export function Button({
     ghost: { background: "transparent", color: "var(--text-soft)" },
   };
   return (
-    <button {...rest} style={{ ...base, ...variants[variant], ...style }}>
+    <button
+      {...rest}
+      style={{
+        ...base,
+        ...variants[variant],
+        ...(rest.disabled ? { opacity: 0.45, cursor: "default" } : {}),
+        ...style,
+      }}
+    >
       {children}
     </button>
   );
@@ -73,6 +81,111 @@ export function Pill({ children, tone = "soft" }: { children: ReactNode; tone?: 
     >
       {children}
     </span>
+  );
+}
+
+export function Toggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <button
+      role="switch"
+      aria-checked={on}
+      onClick={() => onChange(!on)}
+      style={{
+        width: 46,
+        height: 26,
+        borderRadius: 999,
+        border: "none",
+        cursor: "pointer",
+        background: on ? "var(--accent)" : "var(--border)",
+        position: "relative",
+        transition: "background .18s ease",
+      }}
+    >
+      <span
+        style={{
+          position: "absolute",
+          top: 3,
+          left: on ? 23 : 3,
+          width: 20,
+          height: 20,
+          borderRadius: "50%",
+          background: "#fff",
+          transition: "left .18s ease",
+          boxShadow: "0 1px 2px rgba(0,0,0,.2)",
+        }}
+      />
+    </button>
+  );
+}
+
+export function Segmented<T extends string>({
+  value,
+  onChange,
+  options,
+}: {
+  value: T;
+  onChange: (v: T) => void;
+  options: [T, string][];
+}) {
+  return (
+    <div style={{ display: "inline-flex", background: "var(--surface-2)", borderRadius: 10, padding: 3, gap: 2 }}>
+      {options.map(([v, label]) => (
+        <button
+          key={v}
+          onClick={() => onChange(v)}
+          style={{
+            border: "none",
+            cursor: "pointer",
+            borderRadius: 8,
+            padding: "0.35rem 0.7rem",
+            fontSize: "0.85rem",
+            fontWeight: 600,
+            fontFamily: "inherit",
+            background: value === v ? "var(--surface)" : "transparent",
+            color: value === v ? "var(--accent-strong)" : "var(--text-soft)",
+            boxShadow: value === v ? "var(--shadow)" : "none",
+          }}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+export function Stepper({
+  value,
+  min,
+  max,
+  onChange,
+}: {
+  value: number;
+  min: number;
+  max: number;
+  onChange: (v: number) => void;
+}) {
+  return (
+    <div style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+      <Button
+        variant="soft"
+        aria-label="Méně"
+        disabled={value <= min}
+        onClick={() => onChange(Math.max(min, value - 1))}
+        style={{ padding: "0.15rem 0.65rem", fontSize: "1.05rem" }}
+      >
+        −
+      </Button>
+      <span style={{ minWidth: 22, textAlign: "center", fontWeight: 700 }}>{value}</span>
+      <Button
+        variant="soft"
+        aria-label="Více"
+        disabled={value >= max}
+        onClick={() => onChange(Math.min(max, value + 1))}
+        style={{ padding: "0.15rem 0.65rem", fontSize: "1.05rem" }}
+      >
+        +
+      </Button>
+    </div>
   );
 }
 

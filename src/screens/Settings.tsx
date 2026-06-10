@@ -5,12 +5,13 @@ import {
   setScaffold,
   setSettings,
   useSettings,
+  type DrillLength,
   type ErrorMode,
   type TextSize,
   type Theme,
 } from "../ui/settings";
 import type { KeyboardLayout } from "../lib/platform";
-import { Button, Card, Pill } from "../ui/primitives";
+import { Button, Card, Pill, Segmented, Stepper, Toggle } from "../ui/primitives";
 
 export function Settings() {
   const s = useSettings();
@@ -92,6 +93,26 @@ export function Settings() {
             options={[
               ["block", "Počkat na správnou"],
               ["flow", "Pokračovat dál"],
+            ]}
+          />
+        </Row>
+        <Row label="Délka skupin" hint="Skupiny ve cvičení mají 1 až tolik znaků">
+          <Stepper value={s.maxGroupLen} min={1} max={8} onChange={(v) => setSettings({ maxGroupLen: v })} />
+        </Row>
+        <Row label="Enter na konci řádku" hint="Každý řádek cvičení se ukončí klávesou Enter">
+          <Toggle on={s.enterAtEol} onChange={(v) => setSettings({ enterAtEol: v })} />
+        </Row>
+        <Row label="Střídání rukou" hint="Skupiny upřednostní střídání levé a pravé ruky; vypnuto = čistě náhodné">
+          <Toggle on={s.handAlternation} onChange={(v) => setSettings({ handAlternation: v })} />
+        </Row>
+        <Row label="Délka cvičení" hint="Kolik řádků má každá část lekce">
+          <Segmented<DrillLength>
+            value={s.drillLength}
+            onChange={(v) => setSettings({ drillLength: v })}
+            options={[
+              ["short", "Krátké"],
+              ["normal", "Normální"],
+              ["long", "Dlouhé"],
             ]}
           />
         </Row>
@@ -237,71 +258,3 @@ function Row({ label, hint, children }: { label: string; hint?: string; children
   );
 }
 
-function Toggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => void }) {
-  return (
-    <button
-      role="switch"
-      aria-checked={on}
-      onClick={() => onChange(!on)}
-      style={{
-        width: 46,
-        height: 26,
-        borderRadius: 999,
-        border: "none",
-        cursor: "pointer",
-        background: on ? "var(--accent)" : "var(--border)",
-        position: "relative",
-        transition: "background .18s ease",
-      }}
-    >
-      <span
-        style={{
-          position: "absolute",
-          top: 3,
-          left: on ? 23 : 3,
-          width: 20,
-          height: 20,
-          borderRadius: "50%",
-          background: "#fff",
-          transition: "left .18s ease",
-          boxShadow: "0 1px 2px rgba(0,0,0,.2)",
-        }}
-      />
-    </button>
-  );
-}
-
-function Segmented<T extends string>({
-  value,
-  onChange,
-  options,
-}: {
-  value: T;
-  onChange: (v: T) => void;
-  options: [T, string][];
-}) {
-  return (
-    <div style={{ display: "inline-flex", background: "var(--surface-2)", borderRadius: 10, padding: 3, gap: 2 }}>
-      {options.map(([v, label]) => (
-        <button
-          key={v}
-          onClick={() => onChange(v)}
-          style={{
-            border: "none",
-            cursor: "pointer",
-            borderRadius: 8,
-            padding: "0.35rem 0.7rem",
-            fontSize: "0.85rem",
-            fontWeight: 600,
-            fontFamily: "inherit",
-            background: value === v ? "var(--surface)" : "transparent",
-            color: value === v ? "var(--accent-strong)" : "var(--text-soft)",
-            boxShadow: value === v ? "var(--shadow)" : "none",
-          }}
-        >
-          {label}
-        </button>
-      ))}
-    </div>
-  );
-}
