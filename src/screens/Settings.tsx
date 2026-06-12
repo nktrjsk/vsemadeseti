@@ -164,14 +164,12 @@ export function Settings() {
         <Card style={{ background: "var(--surface-2)" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
             <strong>Obnovovací fráze</strong>
-            {showPhrase ? (
-              <div style={{ display: "flex", gap: 6 }}>
-                <Button variant="ghost" onClick={copyPhrase}>{copied ? "Zkopírováno ✓" : "Kopírovat"}</Button>
-                <Button variant="ghost" onClick={() => setShowPhrase(false)}>Skrýt</Button>
-              </div>
-            ) : (
-              <Button variant="ghost" onClick={() => setShowPhrase(true)}>Zobrazit</Button>
-            )}
+            <div style={{ display: "flex", gap: 6 }}>
+              <Button variant="ghost" onClick={copyPhrase}>{copied ? "Zkopírováno ✓" : "Kopírovat"}</Button>
+              <Button variant="ghost" onClick={() => setShowPhrase((v) => !v)}>
+                {showPhrase ? "Skrýt" : "Zobrazit"}
+              </Button>
+            </div>
           </div>
           {showPhrase ? (
             <div
