@@ -37,14 +37,14 @@ export function Practice() {
     <div style={{ maxWidth: 720, margin: "0 auto", padding: "1.5rem 1rem" }}>
       <h1 style={{ fontSize: "1.6rem" }}>Volné psaní</h1>
       <p style={{ color: "var(--text-soft)" }}>
-        Vyber si klidný text, nebo vlož vlastní — písničku, báseň, poznámky. Bez hodnocení, jen tak.
+        Vyber si text, nebo vlož vlastní — písničku, báseň, poznámky. Výsledky se neukládají.
       </p>
 
       <div style={{ display: "grid", gap: 12, marginTop: 18 }}>
         {PASSAGES.map((p) => (
           <Card key={p.title} onClick={() => setText(p.text)} style={{ cursor: "pointer" }}>
             <div style={{ fontWeight: 600 }}>{p.title}</div>
-            <div style={{ color: "var(--text-faint)", fontSize: "0.9rem", marginTop: 4, whiteSpace: "pre-wrap" }}>
+            <div style={{ color: "var(--text-soft)", fontSize: "0.9rem", marginTop: 4, whiteSpace: "pre-wrap" }}>
               {p.text.split("\n")[0]}…
             </div>
           </Card>

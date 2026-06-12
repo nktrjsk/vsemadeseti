@@ -20,7 +20,7 @@ export function Playground() {
         <h1 style={{ fontSize: "1.6rem", margin: 0 }}>Hřiště</h1>
         <Pill>nic se nezaznamenává</Pill>
       </div>
-      <p style={{ color: "var(--text-soft)" }}>Jen si piš a osahej si klávesnici. Žádný cíl, žádné měření.</p>
+      <p style={{ color: "var(--text-soft)" }}>Volný prostor na vyzkoušení klávesnice, bez měření.</p>
 
       <Card style={{ marginTop: 14 }}>
         <textarea

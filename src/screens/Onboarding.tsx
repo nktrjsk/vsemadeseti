@@ -1,31 +1,15 @@
-import { useState } from "react";
-import { Button, Card } from "../ui/primitives";
-import { setSettings } from "../ui/settings";
+import { useState, type ReactNode } from "react";
+import { Button, Card, Segmented, Toggle } from "../ui/primitives";
+import { setSettings, useSettings, type TextSize, type Theme } from "../ui/settings";
 import { navigate } from "../lib/router";
 import { LESSONS } from "../data/curriculum";
+import { IconCompass, IconSettings, IconSprout } from "../ui/icons";
 
-const STEPS = [
-  {
-    emoji: "🌿",
-    title: "Vítej u psaní všemi deseti",
-    body: "Tohle je klidné místo, kde se naučíš psát, aniž by ses musel{a} dívat na klávesnici. Žádné soutěžení, žádný stres — jen ty a tvoje tempo.",
-  },
-  {
-    emoji: "🤲",
-    title: "Začni u základní řady",
-    body: "Polož prsty na řadu A S D F a J K L Ů. Cítíš dva malé hrbolky na klávesách F a J? Tam patří ukazováčky. Odtud se vracíš po každém úhozu.",
-  },
-  {
-    emoji: "🧭",
-    title: "Jak to chodí",
-    body: "Aplikace ti vždy ukáže další klávesu i správný prst. Když uděláš chybu, nic se neděje — jen to v klidu zkusíš znovu. Můžeš kdykoliv změnit nastavení tak, aby ti to sedělo.",
-  },
-];
+const TOTAL_STEPS = 4;
 
 export function Onboarding() {
   const [i, setI] = useState(0);
-  const step = STEPS[i];
-  const last = i === STEPS.length - 1;
+  const last = i === TOTAL_STEPS - 1;
 
   const finish = () => {
     setSettings({ onboarded: true });
@@ -33,38 +17,80 @@ export function Onboarding() {
   };
 
   return (
-    <div style={{ maxWidth: 520, margin: "0 auto", padding: "3rem 1rem", minHeight: "70vh", display: "flex", alignItems: "center" }}>
+    <div
+      style={{
+        maxWidth: 520,
+        margin: "0 auto",
+        padding: "2.5rem 1rem 3rem",
+        minHeight: "80vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 22,
+      }}
+    >
+      {i > 0 && (
+        <div
+          style={{
+            fontWeight: 600,
+            fontSize: "0.9rem",
+            letterSpacing: "0.04em",
+            color: "var(--text-soft)",
+          }}
+        >
+          Všema deseti
+        </div>
+      )}
       <Card style={{ textAlign: "center", padding: "2.5rem 2rem", width: "100%" }}>
-        <div style={{ fontSize: "3rem", marginBottom: 10 }}>{step.emoji}</div>
-        <h1 style={{ fontSize: "1.6rem", margin: "0 0 12px" }}>{step.title}</h1>
-        <p style={{ color: "var(--text-soft)", lineHeight: 1.6, fontSize: "1.05rem" }}>
-          {step.body.replace(/\{a\}/g, "")}
-        </p>
+        {i === 0 && <StepWelcome />}
+        {i === 1 && <StepHomeRow />}
+        {i === 2 && <StepSettings />}
+        {i === 3 && <StepHow />}
 
-        <div style={{ display: "flex", gap: 6, justifyContent: "center", margin: "1.5rem 0" }}>
-          {STEPS.map((_, idx) => (
-            <span
-              key={idx}
-              style={{
-                width: 8,
-                height: 8,
-                borderRadius: 999,
-                background: idx === i ? "var(--accent)" : "var(--border)",
-              }}
-            />
-          ))}
+        <div style={{ margin: "1.5rem 0" }}>
+          <div style={{ fontSize: "0.8rem", color: "var(--text-soft)", marginBottom: 8 }}>
+            Krok {i + 1} ze {TOTAL_STEPS}
+          </div>
+          <div aria-hidden="true" style={{ display: "flex", gap: 6, justifyContent: "center" }}>
+            {Array.from({ length: TOTAL_STEPS }, (_, idx) => (
+              <span
+                key={idx}
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: 999,
+                  background: idx === i ? "var(--accent)" : "var(--border)",
+                }}
+              />
+            ))}
+          </div>
         </div>
 
         <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
           {i > 0 && <Button variant="ghost" onClick={() => setI(i - 1)}>Zpět</Button>}
           {!last && <Button onClick={() => setI(i + 1)}>Dál</Button>}
-          {last && <Button onClick={finish}>Pojďme na to →</Button>}
+          {last && <Button onClick={finish}>Začít první lekci →</Button>}
         </div>
         {!last && (
-          <div style={{ marginTop: 14 }}>
+          <div style={{ marginTop: 6, display: "flex", justifyContent: "center" }}>
             <button
               onClick={finish}
-              style={{ background: "none", border: "none", color: "var(--text-faint)", cursor: "pointer", fontSize: "0.85rem" }}
+              style={{
+                background: "none",
+                border: "none",
+                color: "var(--text-soft)",
+                cursor: "pointer",
+                fontSize: "0.85rem",
+                minHeight: 44,
+                padding: "0 1rem",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                textDecoration: "underline",
+                textUnderlineOffset: 3,
+                textDecorationColor: "var(--border)",
+              }}
             >
               Přeskočit úvod
             </button>
@@ -72,5 +98,200 @@ export function Onboarding() {
         )}
       </Card>
     </div>
+  );
+}
+
+function StepIcon({ children }: { children: ReactNode }) {
+  return (
+    <div style={{ display: "flex", justifyContent: "center", color: "var(--accent)", marginBottom: 12 }}>
+      {children}
+    </div>
+  );
+}
+
+function StepTitle({ children }: { children: ReactNode }) {
+  return <h1 style={{ fontSize: "1.6rem", margin: "0 0 12px" }}>{children}</h1>;
+}
+
+function StepBody({ children }: { children: ReactNode }) {
+  return (
+    <p style={{ color: "var(--text-soft)", lineHeight: 1.6, fontSize: "1.05rem", margin: 0 }}>
+      {children}
+    </p>
+  );
+}
+
+function StepWelcome() {
+  return (
+    <>
+      <StepIcon><IconSprout width={40} height={40} /></StepIcon>
+      <StepTitle>Vítej u psaní všemi deseti</StepTitle>
+      <StepBody>
+        Naučíš se psát bez koukání na klávesnici — po malých krocích, od dvou kláves po celá slova.
+      </StepBody>
+      <p style={{ color: "var(--text-soft)", fontSize: "0.88rem", marginTop: 10, marginBottom: 0 }}>
+        Funguje offline, bez účtu — všechno zůstává jen ve tvém zařízení.
+      </p>
+    </>
+  );
+}
+
+/* The home row drawn as keys, with the two F/J anchors pulsing — the bump marks
+ * say "find these without looking" better than a paragraph can. */
+function StepHomeRow() {
+  return (
+    <>
+      <StepTitle>Začni u základní řady</StepTitle>
+      <div aria-hidden="true" style={{ display: "flex", gap: 6, justifyContent: "center", margin: "18px 0 18px" }}>
+        {["A", "S", "D"].map((ch) => <HomeKey key={ch} ch={ch} />)}
+        <HomeKey ch="F" anchor />
+        <span style={{ width: 12 }} />
+        <HomeKey ch="J" anchor />
+        {["K", "L", "Ů"].map((ch) => <HomeKey key={ch} ch={ch} />)}
+      </div>
+      <StepBody>
+        Polož prsty na vyznačené klávesy. Hrbolky na F a J vedou ukazováčky; odtud se prsty
+        po každém úhozu vracejí.
+      </StepBody>
+      <style>{`
+        @keyframes obPulse {
+          0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 35%, transparent); }
+          70% { box-shadow: 0 0 0 8px color-mix(in srgb, var(--accent) 0%, transparent); }
+          100% { box-shadow: 0 0 0 0 transparent; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .ob-key-anchor { animation: none !important; }
+        }
+      `}</style>
+    </>
+  );
+}
+
+function HomeKey({ ch, anchor }: { ch: string; anchor?: boolean }) {
+  return (
+    <span
+      className={anchor ? "ob-key-anchor" : undefined}
+      style={{
+        width: "clamp(30px, 8vw, 38px)",
+        height: 42,
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        position: "relative",
+        border: `1px solid ${anchor ? "var(--accent)" : "var(--border)"}`,
+        borderRadius: 8,
+        background: anchor ? "var(--accent-soft)" : "var(--surface-2)",
+        color: anchor ? "var(--accent-strong)" : "var(--text-soft)",
+        fontFamily: "var(--font-type)",
+        fontWeight: 600,
+        animation: anchor ? "obPulse 2.4s ease-in-out infinite" : undefined,
+      }}
+    >
+      {ch}
+      {anchor && (
+        <span
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: 5,
+            display: "flex",
+            justifyContent: "center",
+            gap: 3,
+          }}
+        >
+          <span style={{ width: 3, height: 3, borderRadius: 999, background: "currentColor", opacity: 0.65 }} />
+          <span style={{ width: 3, height: 3, borderRadius: 999, background: "currentColor", opacity: 0.65 }} />
+        </span>
+      )}
+    </span>
+  );
+}
+
+function StepSettings() {
+  const s = useSettings();
+  return (
+    <>
+      <StepIcon><IconSettings width={40} height={40} /></StepIcon>
+      <StepTitle>Nastav si prostředí</StepTitle>
+      <div style={{ textAlign: "left", margin: "0 auto", maxWidth: 400 }}>
+        <OnbRow label="Motiv">
+          <Segmented<Theme>
+            value={s.theme}
+            onChange={(v) => setSettings({ theme: v })}
+            options={[
+              ["system", "Systém"],
+              ["light", "Světlý"],
+              ["dark", "Tmavý"],
+            ]}
+          />
+        </OnbRow>
+        <OnbRow label="Velikost textu">
+          <Segmented<TextSize>
+            value={s.textSize}
+            onChange={(v) => setSettings({ textSize: v })}
+            options={[
+              ["normal", "Normální"],
+              ["large", "Větší"],
+              ["larger", "Největší"],
+            ]}
+          />
+        </OnbRow>
+        <OnbRow label="Písmo pro dyslektiky" hint="Lépe rozlišitelná písmena v textu cvičení">
+          <Toggle on={s.dyslexia} onChange={(v) => setSettings({ dyslexia: v })} />
+        </OnbRow>
+        <OnbRow label="Jemné zvuky" hint="Tiché cvaknutí a krátký tón na konci lekce" last>
+          <Toggle on={s.sound} onChange={(v) => setSettings({ sound: v })} />
+        </OnbRow>
+      </div>
+      <p style={{ color: "var(--text-soft)", fontSize: "0.85rem", marginTop: 12, marginBottom: 0 }}>
+        Všechno jde později změnit v Nastavení.
+      </p>
+    </>
+  );
+}
+
+function OnbRow({
+  label,
+  hint,
+  last,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  last?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 12,
+        padding: "0.55rem 0",
+        borderBottom: last ? "none" : "1px solid var(--border)",
+      }}
+    >
+      <div>
+        <div style={{ fontWeight: 500, fontSize: "0.95rem" }}>{label}</div>
+        {hint && <div style={{ fontSize: "0.8rem", color: "var(--text-soft)", marginTop: 2 }}>{hint}</div>}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function StepHow() {
+  return (
+    <>
+      <StepIcon><IconCompass width={40} height={40} /></StepIcon>
+      <StepTitle>Jak to chodí</StepTitle>
+      <StepBody>
+        Aplikace ukazuje další klávesu i prst, kterým ji stisknout. Překlep nic nepokazí — jen ho
+        opravíš a pokračuješ. Pomůcky i chování jdou upravit v nastavení.
+      </StepBody>
+    </>
   );
 }

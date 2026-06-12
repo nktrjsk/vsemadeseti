@@ -31,7 +31,7 @@ export function TextDisplay({
         const isNewline = it.char === "\n";
         if (isNewline && !showEnter) return <br key={i} />;
         const isSpace = it.char === " ";
-        let color = "var(--text-faint)";
+        let color = "var(--text-pending)";
         let background = "transparent";
         let borderBottom = "2px solid transparent";
         if (it.status === "correct") color = "var(--text)";

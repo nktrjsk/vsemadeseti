@@ -19,7 +19,8 @@ export function Button({
     fontFamily: "inherit",
   };
   const variants: Record<string, CSSProperties> = {
-    primary: { background: "var(--accent)", color: "#fff", boxShadow: "var(--shadow)" },
+    // accent-strong (not accent) so white/ink label clears WCAG AA 4.5:1 in light mode
+    primary: { background: "var(--accent-strong)", color: "var(--on-accent)", boxShadow: "var(--shadow)" },
     soft: { background: "var(--accent-soft)", color: "var(--accent-strong)" },
     ghost: { background: "transparent", color: "var(--text-soft)" },
   };
@@ -189,7 +190,8 @@ export function Stepper({
   );
 }
 
-export function Progress({ value }: { value: number }) {
+export function Progress({ value, label }: { value: number; label?: string }) {
+  const pct = Math.round(value * 100);
   return (
     <div
       style={{
@@ -199,17 +201,22 @@ export function Progress({ value }: { value: number }) {
         overflow: "hidden",
       }}
       role="progressbar"
-      aria-valuenow={Math.round(value * 100)}
+      aria-label={label}
+      aria-valuenow={pct}
       aria-valuemin={0}
       aria-valuemax={100}
+      aria-valuetext={`${pct} %`}
     >
       <div
         style={{
-          width: `${Math.min(100, Math.max(0, value * 100))}%`,
+          width: "100%",
           height: "100%",
           background: "var(--accent)",
           borderRadius: 999,
-          transition: "width .4s ease",
+          // animate transform, not width — keeps the fill off the layout path
+          transform: `scaleX(${Math.min(1, Math.max(0, value))})`,
+          transformOrigin: "left",
+          transition: "transform .4s ease-out",
         }}
       />
     </div>

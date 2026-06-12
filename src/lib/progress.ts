@@ -13,7 +13,7 @@ export interface KeyStatRow {
   misses: number;
 }
 
-const MASTERY = 0.9; // accuracy that marks a lesson "ready for next"
+export const MASTERY = 0.9; // accuracy that marks a lesson "ready for next"
 
 /** lessonId -> best accuracy seen */
 export function bestAccuracyByLesson(attempts: readonly AttemptRow[]): Map<string, number> {
@@ -51,21 +51,22 @@ export function weakKeys(stats: readonly KeyStatRow[], limit = 8): string[] {
     .map((s) => s.char);
 }
 
-/** Consistency streak in days, counting back from today (local). */
-export function streak(days: readonly string[]): number {
-  const set = new Set(days);
-  let n = 0;
-  const d = new Date();
-  // allow "today not yet practiced" to not break the streak: start from today,
-  // but if today missing, start from yesterday.
-  if (!set.has(isoDay(d))) d.setDate(d.getDate() - 1);
-  while (set.has(isoDay(d))) {
-    n++;
-    d.setDate(d.getDate() - 1);
-  }
-  return n;
+/**
+ * How many distinct days were practiced in a calendar year (default: this one).
+ *
+ * Deliberately cumulative, not a consecutive "streak": the count only ever
+ * grows, so a missed day never resets it and never becomes a guilt signal.
+ * That's the brand's positively-motivating stance, not Duolingo loss-aversion.
+ */
+export function practiceDaysInYear(
+  days: readonly string[],
+  year: number = new Date().getFullYear(),
+): number {
+  const prefix = `${year}-`;
+  return new Set(days.filter((d) => d.startsWith(prefix))).size;
 }
 
+/** Local calendar day as an ISO `YYYY-MM-DD` string. */
 export function isoDay(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
     d.getDate(),

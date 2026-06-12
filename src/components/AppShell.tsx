@@ -1,12 +1,20 @@
 import type { ReactNode } from "react";
 import { navigate, useRoute, parseRoute } from "../lib/router";
+import {
+  IconLeaf,
+  IconPen,
+  IconRoute,
+  IconSettings,
+  IconSprout,
+  IconTarget,
+} from "../ui/icons";
 
-const NAV: [string, string, string][] = [
-  ["/", "Cesta", "🧭"],
-  ["/practice", "Volné psaní", "✍️"],
-  ["/weak", "Doladit", "🎯"],
-  ["/playground", "Hřiště", "🌿"],
-  ["/settings", "Nastavení", "⚙️"],
+const NAV: [string, string, () => ReactNode][] = [
+  ["/", "Cesta", () => <IconRoute />],
+  ["/practice", "Volné psaní", () => <IconPen />],
+  ["/weak", "Doladit", () => <IconTarget />],
+  ["/playground", "Hřiště", () => <IconLeaf />],
+  ["/settings", "Nastavení", () => <IconSettings />],
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -20,6 +28,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+      <a href="#main" className="skip-link">Přeskočit na obsah</a>
       <header
         style={{
           position: "sticky",
@@ -43,17 +52,20 @@ export function AppShell({ children }: { children: ReactNode }) {
         >
           <button
             onClick={() => navigate("/")}
-            style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", cursor: "pointer" }}
+            style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", cursor: "pointer", flexShrink: 0 }}
           >
-            <span style={{ fontSize: "1.3rem" }}>🌱</span>
-            <span style={{ fontWeight: 700, fontSize: "1.1rem", color: "var(--text)" }}>Všema deseti</span>
+            <span aria-hidden style={{ display: "inline-flex", color: "var(--accent)" }}>
+              <IconSprout width={22} height={22} />
+            </span>
+            <span style={{ fontWeight: 700, fontSize: "1.1rem", color: "var(--text)", whiteSpace: "nowrap" }}>Všema deseti</span>
           </button>
           <nav style={{ display: "flex", gap: 2 }}>
-            {NAV.map(([path, label, icon]) => (
+            {NAV.map(([path, label, renderIcon]) => (
               <button
                 key={path}
                 onClick={() => navigate(path)}
                 aria-current={isActive(path) ? "page" : undefined}
+                aria-label={label}
                 title={label}
                 style={{
                   border: "none",
@@ -70,14 +82,14 @@ export function AppShell({ children }: { children: ReactNode }) {
                   gap: 6,
                 }}
               >
-                <span aria-hidden>{icon}</span>
+                <span aria-hidden style={{ display: "inline-flex" }}>{renderIcon()}</span>
                 <span style={{ display: "inline" }} className="nav-label">{label}</span>
               </button>
             ))}
           </nav>
         </div>
       </header>
-      <main style={{ flex: 1 }}>{children}</main>
+      <main id="main" tabIndex={-1} style={{ flex: 1, outline: "none" }}>{children}</main>
       <style>{`@media (max-width:640px){.nav-label{display:none !important}}`}</style>
     </div>
   );

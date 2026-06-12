@@ -38,9 +38,11 @@
   --text: #2e2a24;
   --text-soft: #6f675c;
   --text-faint: #a39a8c;
+  --text-pending: #8a8070; /* upcoming drill chars: dimmed but ≥3:1 large-text */
   --accent: #5b8a72;
   --accent-soft: #e4efe7;
   --accent-strong: #426a56;
+  --on-accent: #ffffff; /* text/glyphs on an accent fill */
   --good: #5b8a72;
   --gentle: #c9b977; /* used for "try again", warm not alarming */
   --shadow: 0 1px 2px rgba(46, 42, 36, 0.04), 0 8px 24px rgba(46, 42, 36, 0.06);
@@ -55,9 +57,11 @@
   --text: #efe9e0;
   --text-soft: #b6ac9e;
   --text-faint: #7c7468;
+  --text-pending: #7c7468; /* dark faint already clears 3:1 on the dark bg */
   --accent: #7fb295;
   --accent-soft: #2a3a31;
   --accent-strong: #9cc8ae;
+  --on-accent: #15201a; /* dark ink reads on the light sage of dark mode */
   --good: #7fb295;
   --gentle: #d8c989;
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px rgba(0, 0, 0, 0.35);
@@ -112,4 +116,25 @@ body {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
   border-radius: 6px;
+}
+
+/* Skip-to-content: off-screen until focused, so keyboard users can jump past
+   the nav (and the long lesson trail) straight to the main content. */
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -48px;
+  z-index: 50;
+  padding: 0.5rem 0.9rem;
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--accent-strong);
+  border: 1px solid var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: var(--shadow);
+  transition: top 0.16s ease;
+}
+.skip-link:focus {
+  top: 12px;
 }

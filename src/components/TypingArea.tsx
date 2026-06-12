@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useTypingSession } from "../engine/useTypingSession";
-import { useSettings } from "../ui/settings";
+import { setScaffold, useSettings } from "../ui/settings";
+import { IconRestart, IconSettings } from "../ui/icons";
 import { resolveKeyboardPlatform } from "../lib/platform";
 import { Keyboard } from "./Keyboard";
 import { HandsHint } from "./HandsHint";
@@ -136,6 +137,29 @@ export function TypingArea({
               <Pill>{Math.round(session.cpm)} úhozů/min</Pill>
             </>
           )}
+          <button
+            aria-label="Začít tento krok znovu"
+            title="Začít tento krok znovu"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={(e) => {
+              e.stopPropagation();
+              session.reset();
+            }}
+            style={{
+              border: "1px solid var(--border)",
+              background: "var(--surface-2)",
+              color: "var(--text-soft)",
+              borderRadius: 999,
+              width: 32,
+              height: 32,
+              cursor: "pointer",
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <IconRestart width={16} height={16} />
+          </button>
           <div style={{ position: "relative" }}>
             <button
               aria-label="Nastavení cvičení"
@@ -148,16 +172,17 @@ export function TypingArea({
               style={{
                 border: "1px solid var(--border)",
                 background: showGear ? "var(--accent-soft)" : "var(--surface-2)",
-                color: "var(--text-soft)",
+                color: showGear ? "var(--accent-strong)" : "var(--text-soft)",
                 borderRadius: 999,
                 width: 32,
                 height: 32,
                 cursor: "pointer",
-                fontSize: "1rem",
-                lineHeight: 1,
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
-              ⚙
+              <IconSettings width={16} height={16} />
             </button>
             {showGear && (
               <>
@@ -207,9 +232,22 @@ export function TypingArea({
         />
       )}
 
-      <div style={{ display: "flex", justifyContent: "center", gap: 10 }}>
-        <Button variant="ghost" onClick={() => session.reset()}>
-          ↺ Začít tento krok znovu
+      <div style={{ display: "flex", justifyContent: "center", gap: 10, flexWrap: "wrap" }}>
+        <Button
+          variant="ghost"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => setScaffold({ keyboard: !settings.scaffold.keyboard })}
+          style={{ fontSize: "0.85rem", padding: "0.3rem 0.8rem" }}
+        >
+          {settings.scaffold.keyboard ? "Skrýt klávesnici" : "Zobrazit klávesnici"}
+        </Button>
+        <Button
+          variant="ghost"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => setScaffold({ hands: !settings.scaffold.hands })}
+          style={{ fontSize: "0.85rem", padding: "0.3rem 0.8rem" }}
+        >
+          {settings.scaffold.hands ? "Skrýt ruce" : "Zobrazit ruce"}
         </Button>
       </div>
     </div>

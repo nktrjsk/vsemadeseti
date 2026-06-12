@@ -39,6 +39,8 @@ export interface Settings {
   drillLength: DrillLength;
   /** prefer alternating hands/fingers inside groups (off = pure random) */
   handAlternation: boolean;
+  /** the course-path legend („✓ hotovo · › tady jsi …") was dismissed */
+  pathLegendDismissed: boolean;
 }
 
 const DEFAULTS: Settings = {
@@ -55,6 +57,7 @@ const DEFAULTS: Settings = {
   enterAtEol: true,
   drillLength: "normal",
   handAlternation: true,
+  pathLegendDismissed: false,
 };
 
 const KEY = "vsemadeseti.settings";

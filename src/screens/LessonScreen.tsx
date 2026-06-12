@@ -7,8 +7,9 @@ import { buildSteps } from "../data/generator";
 import { TypingArea, type RunSummary, type Segment } from "../components/TypingArea";
 import { Button, Card, Pill } from "../ui/primitives";
 import { FingerLegend } from "../components/HandsHint";
+import { IconSprout } from "../ui/icons";
 import { navigate } from "../lib/router";
-import { bestAccuracyByLesson, weakKeys } from "../lib/progress";
+import { bestAccuracyByLesson, MASTERY, weakKeys } from "../lib/progress";
 import { DRILL_LINES, useSettings } from "../ui/settings";
 
 export function LessonScreen({ lessonId }: { lessonId: string }) {
@@ -95,9 +96,11 @@ export function LessonScreen({ lessonId }: { lessonId: string }) {
       ) : (
         <Card>
           <TypingArea segments={segments} onComplete={handleComplete} resetKey={`${lessonId}:${attempt}`} />
-          <div style={{ marginTop: 18, paddingTop: 14, borderTop: "1px solid var(--border)" }}>
-            <FingerLegend />
-          </div>
+          {(settings.scaffold.keyboard || settings.scaffold.hands) && (
+            <div style={{ marginTop: 18, paddingTop: 14, borderTop: "1px solid var(--border)" }}>
+              <FingerLegend />
+            </div>
+          )}
         </Card>
       )}
     </div>
@@ -105,10 +108,10 @@ export function LessonScreen({ lessonId }: { lessonId: string }) {
 }
 
 function encouragement(acc: number): string {
-  if (acc >= 0.97) return "Krásná, čistá práce! 🌿";
-  if (acc >= 0.9) return "Pěkně ti to jde — jsi připraven{a} jít dál.";
-  if (acc >= 0.75) return "Dobrý pokus. Klidně si to projdi ještě jednou.";
-  return "Každý pokus se počítá. Zkus to znovu, beze spěchu.";
+  if (acc >= 0.97) return "Čistá práce.";
+  if (acc >= 0.9) return "Hotovo — můžeš jít dál.";
+  if (acc >= 0.75) return "Dobrý základ. Ještě jedno kolo to upevní.";
+  return "Tahle lekce chce ještě chvíli. Klidně znovu.";
 }
 
 function SummaryCard({
@@ -123,30 +126,49 @@ function SummaryCard({
   onNext?: () => void;
 }) {
   const acc = Math.round(summary.accuracy * 100);
-  const improved = summary.accuracy > prevBest + 0.001 && prevBest > 0;
+  const delta = Math.round((summary.accuracy - prevBest) * 100);
+  const improved = prevBest > 0 && delta >= 1;
+  // the two card states: mastered celebrates and points forward, under-mastery
+  // shifts the filled button (and the icon's color) to "one more round"
+  const mastered = summary.accuracy >= MASTERY;
   return (
     <Card style={{ textAlign: "center", padding: "2.5rem 1.5rem" }}>
-      <div style={{ fontSize: "2.6rem", marginBottom: 6 }}>🌱</div>
-      <h2 style={{ margin: "0 0 6px", fontSize: "1.5rem" }}>{encouragement(summary.accuracy).replace("{a}", "")}</h2>
-      <p style={{ color: "var(--text-soft)", marginTop: 0 }}>
-        {improved
-          ? "Lepší než minule — roste ti to pod rukama."
-          : "Postupuješ svým vlastním tempem."}
-      </p>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          color: mastered ? "var(--accent)" : "var(--gentle)",
+          marginBottom: 8,
+        }}
+      >
+        <IconSprout width={36} height={36} />
+      </div>
+      <h2 style={{ margin: "0 0 6px", fontSize: "1.5rem" }}>{encouragement(summary.accuracy)}</h2>
+      {improved && (
+        <p style={{ color: "var(--text-soft)", marginTop: 0 }}>O {delta} % líp než minule.</p>
+      )}
 
       <div style={{ display: "flex", gap: 16, justifyContent: "center", margin: "1.6rem 0" }}>
         <Stat label="přesnost" value={`${acc} %`} hero />
         <Stat label="úhozů/min" value={`${Math.round(summary.cpm)}`} />
       </div>
-      <p style={{ fontSize: "0.82rem", color: "var(--text-faint)", maxWidth: 380, margin: "0 auto 1.4rem" }}>
-        Rychlost je tu jen pro tebe, jako informace. Žádné srovnávání, žádný spěch.
-      </p>
 
       <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
-        <Button variant="soft" onClick={onReplay}>↺ Ještě jednou</Button>
-        {onNext && <Button onClick={onNext}>Pokračovat →</Button>}
-        {!onNext && <Button onClick={onReplay}>Hotovo 🎉</Button>}
+        <Button variant={mastered ? "soft" : "primary"} onClick={onReplay}>↺ Ještě jednou</Button>
+        {onNext && (
+          <Button variant={mastered ? "primary" : "soft"} onClick={onNext}>Pokračovat →</Button>
+        )}
+        {!onNext && mastered && (
+          <Button onClick={() => navigate("/")}>Zpět na cestu</Button>
+        )}
       </div>
+      {(onNext || !mastered) && (
+        <div style={{ marginTop: 12 }}>
+          <Button variant="ghost" onClick={() => navigate("/")} style={{ fontSize: "0.9rem" }}>
+            Zpět na cestu
+          </Button>
+        </div>
+      )}
     </Card>
   );
 }

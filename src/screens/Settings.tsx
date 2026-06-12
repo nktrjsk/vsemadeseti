@@ -67,7 +67,7 @@ export function Settings() {
       </Section>
 
       <Section title="Zvuk">
-        <Row label="Jemné zvuky" hint="Tiché cvaknutí a milý tón na konci lekce">
+        <Row label="Jemné zvuky" hint="Tiché cvaknutí a krátký tón na konci lekce">
           <Toggle on={s.sound} onChange={(v) => setSettings({ sound: v })} />
         </Row>
         {s.sound && (
@@ -174,7 +174,7 @@ export function Settings() {
               {mnemonic ?? "…"}
             </div>
           )}
-          <p style={{ fontSize: "0.8rem", color: "var(--text-faint)", marginBottom: 0 }}>
+          <p style={{ fontSize: "0.8rem", color: "var(--text-soft)", marginBottom: 0 }}>
             Ulož si ji na bezpečné místo. Kdo ji má, vidí tvůj pokrok.
           </p>
         </Card>
@@ -209,7 +209,7 @@ export function Settings() {
         </details>
 
         <details style={{ marginTop: 14 }}>
-          <summary style={{ cursor: "pointer", color: "var(--text-faint)" }}>
+          <summary style={{ cursor: "pointer", color: "var(--text-soft)" }}>
             Začít úplně od začátku
           </summary>
           <div style={{ marginTop: 10 }}>
@@ -222,6 +222,23 @@ export function Settings() {
           </div>
         </details>
       </Section>
+
+      <Section title="Proč Všema deseti">
+        <ul
+          style={{
+            margin: 0,
+            padding: "0.2rem 0 0.2rem 1.1rem",
+            color: "var(--text-soft)",
+            lineHeight: 1.7,
+            fontSize: "0.92rem",
+          }}
+        >
+          <li>Data zůstávají v zařízení — aplikace funguje offline a nic neposílá na servery.</li>
+          <li>Žádné žebříčky ani srovnávání s ostatními; čísla jsou jen informace pro tebe.</li>
+          <li>Chyby k učení patří — ukazují se klidně a nikdy se netrestají.</li>
+          <li>Přístupnost od základu: písmo pro dyslektiky, větší text, ovládání bez myši.</li>
+        </ul>
+      </Section>
     </div>
   );
 }
@@ -229,7 +246,7 @@ export function Settings() {
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div style={{ margin: "1.4rem 0" }}>
-      <h2 style={{ fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--text-faint)" }}>
+      <h2 style={{ fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--text-soft)" }}>
         {title}
       </h2>
       <Card>{children}</Card>
@@ -251,7 +268,7 @@ function Row({ label, hint, children }: { label: string; hint?: string; children
     >
       <div>
         <div style={{ fontWeight: 500 }}>{label}</div>
-        {hint && <div style={{ fontSize: "0.8rem", color: "var(--text-faint)" }}>{hint}</div>}
+        {hint && <div style={{ fontSize: "0.8rem", color: "var(--text-soft)" }}>{hint}</div>}
       </div>
       <div>{children}</div>
     </div>

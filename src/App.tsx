@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { EvoluProvider } from "@evolu/react";
 import { evolu } from "./db/evolu";
 import { parseRoute, useRoute } from "./lib/router";
@@ -54,8 +55,31 @@ export function App() {
 
   return (
     <EvoluProvider value={evolu}>
-      <AppShell>{screen}</AppShell>
+      <AppShell>
+        <Suspense fallback={<ScreenLoading />}>{screen}</Suspense>
+      </AppShell>
       <ReloadPrompt />
     </EvoluProvider>
+  );
+}
+
+/** Calm placeholder while Evolu loads progress from local storage (or syncs on
+ * a fresh device). useQuery suspends until the local query resolves; without a
+ * boundary a cold load to a data-backed screen would have no fallback. */
+function ScreenLoading() {
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      style={{
+        maxWidth: 760,
+        margin: "0 auto",
+        padding: "4rem 1rem",
+        textAlign: "center",
+        color: "var(--text-soft)",
+      }}
+    >
+      Načítám tvůj postup…
+    </div>
   );
 }

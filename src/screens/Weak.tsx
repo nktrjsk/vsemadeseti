@@ -6,6 +6,7 @@ import { filterByChars, WORDS } from "../data/words";
 import { randomGroups } from "../data/generator";
 import { TypingArea, type Segment } from "../components/TypingArea";
 import { Button, Card, Pill } from "../ui/primitives";
+import { IconTarget } from "../ui/icons";
 import { navigate } from "../lib/router";
 import { DRILL_LINES, useSettings } from "../ui/settings";
 
@@ -53,11 +54,13 @@ export function Weak() {
   if (weak.length === 0) {
     return (
       <div style={{ maxWidth: 560, margin: "0 auto", padding: "3rem 1rem", textAlign: "center" }}>
-        <div style={{ fontSize: "2.6rem" }}>🌼</div>
+        <div style={{ display: "flex", justifyContent: "center", color: "var(--accent)", marginBottom: 8 }}>
+          <IconTarget width={36} height={36} />
+        </div>
         <h1 style={{ fontSize: "1.5rem" }}>Zatím nic k dolaďování</h1>
         <p style={{ color: "var(--text-soft)" }}>
-          Až nasbíráš pár lekcí, najdeme klávesy, které ti dělají největší vrásky, a připravíme
-          na ně klidné cvičení. Žádný spěch.
+          Až projdeš pár lekcí, ukážou se tady klávesy, které ti nejčastěji utíkají, a cvičení
+          na míru pro ně.
         </p>
         <Button onClick={() => navigate("/")}>Zpět na cestu</Button>
       </div>
@@ -72,7 +75,7 @@ export function Weak() {
       </div>
       <Card style={{ marginBottom: 14 }}>
         <p style={{ margin: 0, color: "var(--text-soft)" }}>
-          Tyhle klávesy ti zatím utíkají nejčastěji. Pojďme je v klidu posílit:
+          Tyhle klávesy ti zatím utíkají nejčastěji:
         </p>
         <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
           {weak.map((k) => (
