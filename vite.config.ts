@@ -2,10 +2,15 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
+import pkg from "./package.json";
 
 // Evolu runs SQLite in a web worker and uses OPFS; these headers enable
 // cross-origin isolation which OPFS SharedArrayBuffer paths can require.
 export default defineConfig({
+  define: {
+    // shown in Settings → Diagnostika reports
+    __APP_VERSION__: JSON.stringify(pkg.version),
+  },
   plugins: [
     react(),
     tailwindcss(),
@@ -21,22 +26,6 @@ export default defineConfig({
         globPatterns: ["**/*.{js,css,html,wasm,woff,woff2,svg,webmanifest,png,ico}"],
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
         navigateFallback: "index.html",
-        runtimeCaching: [
-          {
-            urlPattern: ({ url }) => url.origin === "https://fonts.googleapis.com",
-            handler: "StaleWhileRevalidate",
-            options: { cacheName: "google-fonts-stylesheets" },
-          },
-          {
-            urlPattern: ({ url }) => url.origin === "https://fonts.gstatic.com",
-            handler: "CacheFirst",
-            options: {
-              cacheName: "google-fonts-files",
-              expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 * 24 * 365 },
-              cacheableResponse: { statuses: [0, 200] },
-            },
-          },
-        ],
       },
     }),
   ],

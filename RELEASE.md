@@ -37,16 +37,23 @@ A failed item **blocks** the release — fix or descope, never waive.
 
 ## Launch checklist (first public release only — delete this section once empty)
 
-- [ ] Name and domain settled; Netlify deploy target chosen and **rollback verified to
-      actually work** (publish an old deploy, confirm it serves)
+- [ ] Name and domain settled (decided 2026-06-12: launch on the Netlify subdomain;
+      custom domain can come later, but note PWA installs pin to the origin) —
+      **remaining**: create/link the Netlify site and verify rollback actually works
+      (publish an old deploy, confirm it serves)
 - [ ] **Netlify auto-publish on push to main turned OFF** — so `npm run release` is the
       sole path to prod (one-time; required for the tag-only deploy model above)
 - [x] License chosen — MIT (`LICENSE` present)
-- [ ] Privacy posture written down (one sentence is enough — e.g. "100% local, no
-      account, no data leaves the device unless you opt into recovery-phrase sync")
+- [x] Privacy posture written down — README "Privacy" section: 100 % local, no
+      account, no servers, no analytics, no third-party requests (all fonts
+      self-hosted as of 2026-06-12); recovery phrase is for the user's own
+      device moves only
 - [ ] Install / onboarding path tested by someone who isn't you
-- [ ] Error reporting wired (L1+) — even a minimal client-side error logger
-- [ ] Analytics baseline captured before announcing, if any
+- [x] Error reporting wired — local-only error log (`src/lib/errlog.ts`): uncaught
+      errors/rejections → localStorage ring buffer; Settings → Diagnostika has a
+      "copy report" action for pasting into a GitHub issue. Zero network, so the
+      privacy posture stays intact.
+- [x] Analytics — none, by design (privacy is the feature); decided 2026-06-12
 - [ ] "Good enough" bar defined as a finite checklist — launch when it's empty, not
       when it feels done
 - [ ] Soft-launch first: one small community / friend group before any broad announcement

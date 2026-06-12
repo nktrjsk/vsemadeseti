@@ -11,6 +11,7 @@ import {
   type Theme,
 } from "../ui/settings";
 import type { KeyboardLayout } from "../lib/platform";
+import { clearErrorLog, formatDiagnostics, getErrorLog } from "../lib/errlog";
 import { Button, Card, FieldRow, Pill, Segmented, Stepper, Toggle } from "../ui/primitives";
 
 export function Settings() {
@@ -21,6 +22,15 @@ export function Settings() {
   const [armed, setArmed] = useState(false); // delete is two-step: arm, then confirm
   const [restoreText, setRestoreText] = useState("");
   const [restoreErr, setRestoreErr] = useState<string | null>(null);
+  const [errCount, setErrCount] = useState(() => getErrorLog().length);
+  const [diagCopied, setDiagCopied] = useState(false);
+
+  const copyDiagnostics = () => {
+    void navigator.clipboard?.writeText(formatDiagnostics()).then(() => {
+      setDiagCopied(true);
+      window.setTimeout(() => setDiagCopied(false), 1800);
+    });
+  };
 
   const copyPhrase = () => {
     if (!mnemonic) return;
@@ -250,6 +260,35 @@ export function Settings() {
             )}
           </div>
         </details>
+      </Section>
+
+      <Section title="Diagnostika">
+        <ul className="settings-list" style={{ marginTop: 0, marginBottom: "0.8rem" }}>
+          <li>Když se něco pokazí, aplikace si chybu poznamená — jen do tohoto prohlížeče.</li>
+          <li>Hlášení můžeš zkopírovat a vložit do chybového hlášení na GitHubu.</li>
+        </ul>
+        <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+          <span style={{ fontSize: "0.85rem", color: "var(--text-soft)" }}>
+            {errCount === 0
+              ? "Zatím žádné zaznamenané chyby."
+              : `Zaznamenané chyby: ${errCount}`}
+          </span>
+          <span style={{ flex: 1 }} />
+          <Button variant="ghost" onClick={copyDiagnostics}>
+            {diagCopied ? "Zkopírováno ✓" : "Kopírovat hlášení"}
+          </Button>
+          {errCount > 0 && (
+            <Button
+              variant="ghost"
+              onClick={() => {
+                clearErrorLog();
+                setErrCount(0);
+              }}
+            >
+              Vymazat
+            </Button>
+          )}
+        </div>
       </Section>
 
       <Section title="Proč Všema deseti">
