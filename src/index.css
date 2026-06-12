@@ -45,6 +45,9 @@
   --on-accent: #ffffff; /* text/glyphs on an accent fill */
   --good: #5b8a72;
   --gentle: #c9b977; /* used for "try again", warm not alarming */
+  --danger: #a8443a; /* muted brick, not alarm-red; white label clears 4.5:1 */
+  --danger-soft: #f3e1de;
+  --on-danger: #ffffff;
   --shadow: 0 1px 2px rgba(46, 42, 36, 0.04), 0 8px 24px rgba(46, 42, 36, 0.06);
 }
 
@@ -64,6 +67,9 @@
   --on-accent: #15201a; /* dark ink reads on the light sage of dark mode */
   --good: #7fb295;
   --gentle: #d8c989;
+  --danger: #b85044; /* brighter for dark surface; white label clears 4.5:1 */
+  --danger-soft: #3a2724;
+  --on-danger: #ffffff;
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px rgba(0, 0, 0, 0.35);
 }
 

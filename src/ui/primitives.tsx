@@ -6,7 +6,7 @@ export function Button({
   children,
   ...rest
 }: ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: "primary" | "soft" | "ghost";
+  variant?: "primary" | "soft" | "ghost" | "danger";
 }) {
   const base: CSSProperties = {
     border: "none",
@@ -23,6 +23,8 @@ export function Button({
     primary: { background: "var(--accent-strong)", color: "var(--on-accent)", boxShadow: "var(--shadow)" },
     soft: { background: "var(--accent-soft)", color: "var(--accent-strong)" },
     ghost: { background: "transparent", color: "var(--text-soft)" },
+    // destructive, irreversible actions only — a calm brick red, not alarm-red
+    danger: { background: "var(--danger)", color: "var(--on-danger)", boxShadow: "var(--shadow)" },
   };
   return (
     <button

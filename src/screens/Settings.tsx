@@ -17,8 +17,18 @@ export function Settings() {
   const s = useSettings();
   const [mnemonic, setMnemonic] = useState<string | null>(null);
   const [showPhrase, setShowPhrase] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [armed, setArmed] = useState(false); // delete is two-step: arm, then confirm
   const [restoreText, setRestoreText] = useState("");
   const [restoreErr, setRestoreErr] = useState<string | null>(null);
+
+  const copyPhrase = () => {
+    if (!mnemonic) return;
+    void navigator.clipboard?.writeText(mnemonic).then(() => {
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    });
+  };
 
   useEffect(() => {
     void evolu.appOwner.then((o) => setMnemonic(o.mnemonic ?? null));
@@ -152,13 +162,18 @@ export function Settings() {
           <li>Obnovovací frází je přeneseš na jiné zařízení — bez účtu, bez e-mailu.</li>
         </ul>
         <Card style={{ background: "var(--surface-2)" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
             <strong>Obnovovací fráze</strong>
-            <Button variant="ghost" onClick={() => setShowPhrase((v) => !v)}>
-              {showPhrase ? "Skrýt" : "Zobrazit"}
-            </Button>
+            {showPhrase ? (
+              <div style={{ display: "flex", gap: 6 }}>
+                <Button variant="ghost" onClick={copyPhrase}>{copied ? "Zkopírováno ✓" : "Kopírovat"}</Button>
+                <Button variant="ghost" onClick={() => setShowPhrase(false)}>Skrýt</Button>
+              </div>
+            ) : (
+              <Button variant="ghost" onClick={() => setShowPhrase(true)}>Zobrazit</Button>
+            )}
           </div>
-          {showPhrase && (
+          {showPhrase ? (
             <div
               style={{
                 marginTop: 8,
@@ -173,6 +188,10 @@ export function Settings() {
             >
               {mnemonic ?? "…"}
             </div>
+          ) : (
+            <p style={{ fontSize: "0.85rem", color: "var(--text-soft)", margin: "10px 0 0", lineHeight: 1.6 }}>
+              Zobrazí se citlivá fráze. Zkontroluj, že ti nikdo nekouká přes rameno.
+            </p>
           )}
           <ul className="settings-list" style={{ fontSize: "0.8rem", marginTop: 10, marginBottom: 0 }}>
             <li>Ulož si ji na bezpečné místo.</li>
@@ -217,9 +236,20 @@ export function Settings() {
             <p style={{ fontSize: "0.85rem", color: "var(--text-soft)" }}>
               Tímto smažeš veškerý svůj pokrok z tohoto zařízení. Nelze vrátit zpět.
             </p>
-            <Button variant="ghost" onClick={() => void evolu.resetAppOwner()}>
-              Smazat a začít znovu
-            </Button>
+            {armed ? (
+              <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+                <Button variant="danger" onClick={() => void evolu.resetAppOwner()}>
+                  Opravdu smazat
+                </Button>
+                <Button variant="ghost" onClick={() => setArmed(false)}>
+                  Zrušit
+                </Button>
+              </div>
+            ) : (
+              <Button variant="danger" onClick={() => setArmed(true)}>
+                Smazat všechna data
+              </Button>
+            )}
           </div>
         </details>
       </Section>
