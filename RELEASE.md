@@ -37,12 +37,14 @@ A failed item **blocks** the release — fix or descope, never waive.
 
 ## Launch checklist (first public release only — delete this section once empty)
 
-- [ ] Name and domain settled (decided 2026-06-12: launch on the Netlify subdomain;
-      custom domain can come later, but note PWA installs pin to the origin) —
-      **remaining**: create/link the Netlify site and verify rollback actually works
-      (publish an old deploy, confirm it serves)
-- [ ] **Netlify auto-publish on push to main turned OFF** — so `npm run release` is the
-      sole path to prod (one-time; required for the tag-only deploy model above)
+- [x] Name and domain settled — `vsemadeseti.netlify.app` (existing site, linked
+      2026-06-12); custom domain can come later, but PWA installs pin to the origin.
+      **Rollback verified** 2026-06-12: published the previous deploy, confirmed prod
+      served the old bundle, restored the current one.
+- [x] **Git-triggered builds turned OFF** (`stop_builds`, 2026-06-12) — pushes to main
+      no longer touch Netlify at all; `npm run release` (CLI deploy) is the sole path
+      to prod. Note: this also disables deploy previews — flip the toggle back in
+      Site config → Build & deploy if previews are ever wanted.
 - [x] License chosen — MIT (`LICENSE` present)
 - [x] Privacy posture written down — README "Privacy" section: 100 % local, no
       account, no servers, no analytics, no third-party requests (all fonts
@@ -54,6 +56,23 @@ A failed item **blocks** the release — fix or descope, never waive.
       "copy report" action for pasting into a GitHub issue. Zero network, so the
       privacy posture stays intact.
 - [x] Analytics — none, by design (privacy is the feature); decided 2026-06-12
-- [ ] "Good enough" bar defined as a finite checklist — launch when it's empty, not
-      when it feels done
+- [x] "Good enough" bar defined — see the finite list below; launch when it's empty,
+      not when it feels done
 - [ ] Soft-launch first: one small community / friend group before any broad announcement
+
+### Good enough to launch (finite — launch when this is empty)
+
+Explicitly **not** blocking (deferred in SPEC.md): other layouts, Tauri wrapper,
+mascot, the full Czech corpus, live cross-device sync.
+
+- [ ] Full smoke list (above) passes on a prod-like build, incl. installed/offline PWA
+- [ ] Layout details verified for every key the curriculum actually teaches —
+      punctuation, AltGr, dead-key combos produce the right characters
+      (README flags these as unverified)
+- [ ] Every lesson on the path generates valid, typable content to completion
+      (no lesson dead-ends from corpus gaps)
+- [ ] One read-through of all user-facing Czech copy (quiet-warm voice, genderless,
+      no self-reassurance)
+- [ ] Onboarding tested by someone who isn't you (= the checklist item above)
+- [ ] Launch note drafted: in-app "what's new" + GitHub release text, distilled
+      from the first CHANGELOG entry
