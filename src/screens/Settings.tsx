@@ -147,10 +147,10 @@ export function Settings() {
       </Section>
 
       <Section title="Záloha a přenos">
-        <p style={{ color: "var(--text-soft)", fontSize: "0.9rem", marginTop: 0 }}>
-          Tvá data zůstávají jen v tomhle prohlížeči. Pomocí obnovovací fráze si je můžeš
-          přenést na jiné zařízení — žádný účet, žádný e-mail.
-        </p>
+        <ul className="settings-list" style={{ marginTop: 0, marginBottom: "0.8rem" }}>
+          <li>Data zůstávají jen v tomhle prohlížeči.</li>
+          <li>Obnovovací frází je přeneseš na jiné zařízení — bez účtu, bez e-mailu.</li>
+        </ul>
         <Card style={{ background: "var(--surface-2)" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <strong>Obnovovací fráze</strong>
@@ -174,9 +174,10 @@ export function Settings() {
               {mnemonic ?? "…"}
             </div>
           )}
-          <p style={{ fontSize: "0.8rem", color: "var(--text-soft)", marginBottom: 0 }}>
-            Ulož si ji na bezpečné místo. Kdo ji má, vidí tvůj pokrok.
-          </p>
+          <ul className="settings-list" style={{ fontSize: "0.8rem", marginTop: 10, marginBottom: 0 }}>
+            <li>Ulož si ji na bezpečné místo.</li>
+            <li>Kdo ji má, vidí tvůj pokrok.</li>
+          </ul>
         </Card>
 
         <details style={{ marginTop: 14 }}>
@@ -224,15 +225,7 @@ export function Settings() {
       </Section>
 
       <Section title="Proč Všema deseti">
-        <ul
-          style={{
-            margin: 0,
-            padding: "0.2rem 0 0.2rem 1.1rem",
-            color: "var(--text-soft)",
-            lineHeight: 1.7,
-            fontSize: "0.92rem",
-          }}
-        >
+        <ul className="settings-list" style={{ fontSize: "0.92rem" }}>
           <li>Data zůstávají v zařízení — aplikace funguje offline a nic neposílá na servery.</li>
           <li>Žádné žebříčky ani srovnávání s ostatními; čísla jsou jen informace pro tebe.</li>
           <li>Chyby k učení patří — ukazují se klidně a nikdy se netrestají.</li>

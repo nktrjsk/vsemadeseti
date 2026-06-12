@@ -179,7 +179,7 @@ function StepHomeRow() {
         {["K", "L", "Ů"].map((ch) => <HomeKey key={ch} ch={ch} />)}
       </div>
       <StepBody>
-        Polož prsty na vyznačené klávesy. Hrbolky na F a J vedou ukazováčky; odtud se prsty
+        Polož prsty na vyznačené klávesy. Hrbolky na F a J vedou ukazováčky; tam se prsty
         po každém úhozu vracejí.
       </StepBody>
       <style>{`

@@ -138,3 +138,24 @@ body {
 .skip-link:focus {
   top: 12px;
 }
+
+/* Tailwind's preflight strips list markers from every ul/ol, so a plain <ul>
+   reads as bullet-less prose. This restores real markers for the few prose
+   lists in Settings — small accent dots, muted body text. */
+.settings-list {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: var(--text-soft);
+  line-height: 1.7;
+  font-size: 0.9rem;
+  list-style: disc outside;
+}
+.settings-list li {
+  padding-left: 0.15rem;
+}
+.settings-list li + li {
+  margin-top: 0.25rem;
+}
+.settings-list li::marker {
+  color: var(--accent);
+}

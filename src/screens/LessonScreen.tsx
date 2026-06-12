@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useQuery } from "@evolu/react";
 import { attemptsQuery, keyStatsQuery, practiceDaysQuery } from "../db/evolu";
 import { recordAttempt, type KeyStatRowFull } from "../db/record";
@@ -131,6 +131,29 @@ function SummaryCard({
   // the two card states: mastered celebrates and points forward, under-mastery
   // shifts the filled button (and the icon's color) to "one more round"
   const mastered = summary.accuracy >= MASTERY;
+
+  // keyboard accelerators on the summary: Enter continues, R repeats, Esc returns
+  // to the path. Skip when a field has focus, and let a focused button own Enter.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const tag = document.activeElement?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      if (e.key === "Enter") {
+        if (tag === "BUTTON") return;
+        if (onNext) { e.preventDefault(); onNext(); }
+        else { e.preventDefault(); navigate("/"); }
+      } else if (e.key === "r" || e.key === "R") {
+        e.preventDefault();
+        onReplay();
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        navigate("/");
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onNext, onReplay]);
+
   return (
     <Card style={{ textAlign: "center", padding: "2.5rem 1.5rem" }}>
       <div
@@ -154,22 +177,51 @@ function SummaryCard({
       </div>
 
       <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
-        <Button variant={mastered ? "soft" : "primary"} onClick={onReplay}>↺ Ještě jednou</Button>
+        <Button variant={mastered ? "soft" : "primary"} onClick={onReplay}>↺ Ještě jednou<KeyHint>R</KeyHint></Button>
         {onNext && (
-          <Button variant={mastered ? "primary" : "soft"} onClick={onNext}>Pokračovat →</Button>
+          <Button variant={mastered ? "primary" : "soft"} onClick={onNext}>Pokračovat →<KeyHint>↵</KeyHint></Button>
         )}
         {!onNext && mastered && (
-          <Button onClick={() => navigate("/")}>Zpět na cestu</Button>
+          <Button onClick={() => navigate("/")}>Zpět na cestu<KeyHint>↵</KeyHint></Button>
         )}
       </div>
       {(onNext || !mastered) && (
         <div style={{ marginTop: 12 }}>
           <Button variant="ghost" onClick={() => navigate("/")} style={{ fontSize: "0.9rem" }}>
-            Zpět na cestu
+            Zpět na cestu<KeyHint>Esc</KeyHint>
           </Button>
         </div>
       )}
     </Card>
+  );
+}
+
+/* A small key-cap badge shown inline on a button to surface its shortcut.
+ * Tints off currentColor, so it reads correctly on every button variant. */
+function KeyHint({ children }: { children: ReactNode }) {
+  return (
+    <kbd
+      aria-hidden="true"
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minWidth: 18,
+        height: 18,
+        padding: "0 5px",
+        marginLeft: 8,
+        borderRadius: 5,
+        fontSize: "0.72em",
+        fontWeight: 600,
+        lineHeight: 1,
+        fontFamily: "inherit",
+        background: "color-mix(in srgb, currentColor 14%, transparent)",
+        border: "1px solid color-mix(in srgb, currentColor 32%, transparent)",
+        verticalAlign: "middle",
+      }}
+    >
+      {children}
+    </kbd>
   );
 }
 
