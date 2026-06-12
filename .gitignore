@@ -6,3 +6,7 @@ dev-dist
 *.local
 .DS_Store
 npm-debug.log*
+
+# local design tooling (impeccable skill + its generated output)
+.claude/
+.impeccable/
