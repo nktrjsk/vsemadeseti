@@ -1,5 +1,5 @@
-import { useState, type ReactNode } from "react";
-import { Button, Card, Segmented, Toggle } from "../ui/primitives";
+import { useEffect, useState, type ReactNode } from "react";
+import { Button, Card, FieldRow, Segmented, Toggle } from "../ui/primitives";
 import { setSettings, useSettings, type TextSize, type Theme } from "../ui/settings";
 import { navigate } from "../lib/router";
 import { LESSONS } from "../data/curriculum";
@@ -9,12 +9,38 @@ const TOTAL_STEPS = 4;
 
 export function Onboarding() {
   const [i, setI] = useState(0);
+  const [leaving, setLeaving] = useState(false);
   const last = i === TOTAL_STEPS - 1;
 
   const finish = () => {
     setSettings({ onboarded: true });
-    navigate(`/lesson/${LESSONS[0].id}`);
+    const go = () => navigate(`/lesson/${LESSONS[0].id}`);
+    // gently fade the flow out before handing off to the first lesson;
+    // honor reduced-motion by navigating immediately
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) {
+      go();
+      return;
+    }
+    setLeaving(true);
+    window.setTimeout(go, 240);
   };
+
+  // keyboard accelerator: Enter advances (or starts the first lesson on the last
+  // step), but only when focus isn't on a control that handles Enter itself
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Enter" || leaving) return;
+      const tag = document.activeElement?.tagName;
+      if (tag === "BUTTON" || tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      e.preventDefault();
+      if (last) finish();
+      else setI((n) => Math.min(n + 1, TOTAL_STEPS - 1));
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [last, leaving]);
 
   return (
     <div
@@ -28,6 +54,9 @@ export function Onboarding() {
         alignItems: "center",
         justifyContent: "center",
         gap: 22,
+        opacity: leaving ? 0 : 1,
+        transform: leaving ? "translateY(-8px)" : "none",
+        transition: "opacity .24s ease-out, transform .24s ease-out",
       }}
     >
       {i > 0 && (
@@ -216,7 +245,7 @@ function StepSettings() {
       <StepIcon><IconSettings width={40} height={40} /></StepIcon>
       <StepTitle>Nastav si prostředí</StepTitle>
       <div style={{ textAlign: "left", margin: "0 auto", maxWidth: 400 }}>
-        <OnbRow label="Motiv">
+        <FieldRow label="Motiv">
           <Segmented<Theme>
             value={s.theme}
             onChange={(v) => setSettings({ theme: v })}
@@ -226,8 +255,8 @@ function StepSettings() {
               ["dark", "Tmavý"],
             ]}
           />
-        </OnbRow>
-        <OnbRow label="Velikost textu">
+        </FieldRow>
+        <FieldRow label="Velikost textu">
           <Segmented<TextSize>
             value={s.textSize}
             onChange={(v) => setSettings({ textSize: v })}
@@ -237,49 +266,18 @@ function StepSettings() {
               ["larger", "Největší"],
             ]}
           />
-        </OnbRow>
-        <OnbRow label="Písmo pro dyslektiky" hint="Lépe rozlišitelná písmena v textu cvičení">
+        </FieldRow>
+        <FieldRow label="Písmo pro dyslektiky" hint="Lépe rozlišitelná písmena v textu cvičení">
           <Toggle on={s.dyslexia} onChange={(v) => setSettings({ dyslexia: v })} />
-        </OnbRow>
-        <OnbRow label="Jemné zvuky" hint="Tiché cvaknutí a krátký tón na konci lekce" last>
+        </FieldRow>
+        <FieldRow label="Jemné zvuky" hint="Tiché cvaknutí a krátký tón na konci lekce" last>
           <Toggle on={s.sound} onChange={(v) => setSettings({ sound: v })} />
-        </OnbRow>
+        </FieldRow>
       </div>
       <p style={{ color: "var(--text-soft)", fontSize: "0.85rem", marginTop: 12, marginBottom: 0 }}>
         Všechno jde později změnit v Nastavení.
       </p>
     </>
-  );
-}
-
-function OnbRow({
-  label,
-  hint,
-  last,
-  children,
-}: {
-  label: string;
-  hint?: string;
-  last?: boolean;
-  children: ReactNode;
-}) {
-  return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 12,
-        padding: "0.55rem 0",
-        borderBottom: last ? "none" : "1px solid var(--border)",
-      }}
-    >
-      <div>
-        <div style={{ fontWeight: 500, fontSize: "0.95rem" }}>{label}</div>
-        {hint && <div style={{ fontSize: "0.8rem", color: "var(--text-soft)", marginTop: 2 }}>{hint}</div>}
-      </div>
-      {children}
-    </div>
   );
 }
 

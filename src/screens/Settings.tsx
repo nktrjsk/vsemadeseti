@@ -11,7 +11,7 @@ import {
   type Theme,
 } from "../ui/settings";
 import type { KeyboardLayout } from "../lib/platform";
-import { Button, Card, Pill, Segmented, Stepper, Toggle } from "../ui/primitives";
+import { Button, Card, FieldRow, Pill, Segmented, Stepper, Toggle } from "../ui/primitives";
 
 export function Settings() {
   const s = useSettings();
@@ -39,7 +39,7 @@ export function Settings() {
       <h1 style={{ fontSize: "1.7rem" }}>Nastavení</h1>
 
       <Section title="Vzhled">
-        <Row label="Motiv">
+        <FieldRow label="Motiv">
           <Segmented<Theme>
             value={s.theme}
             onChange={(v) => setSettings({ theme: v })}
@@ -49,8 +49,8 @@ export function Settings() {
               ["dark", "Tmavý"],
             ]}
           />
-        </Row>
-        <Row label="Velikost textu">
+        </FieldRow>
+        <FieldRow label="Velikost textu">
           <Segmented<TextSize>
             value={s.textSize}
             onChange={(v) => setSettings({ textSize: v })}
@@ -60,18 +60,18 @@ export function Settings() {
               ["larger", "Největší"],
             ]}
           />
-        </Row>
-        <Row label="Písmo pro dyslektiky" hint="Lépe rozlišitelná písmena v textu cvičení">
+        </FieldRow>
+        <FieldRow label="Písmo pro dyslektiky" hint="Lépe rozlišitelná písmena v textu cvičení">
           <Toggle on={s.dyslexia} onChange={(v) => setSettings({ dyslexia: v })} />
-        </Row>
+        </FieldRow>
       </Section>
 
       <Section title="Zvuk">
-        <Row label="Jemné zvuky" hint="Tiché cvaknutí a krátký tón na konci lekce">
+        <FieldRow label="Jemné zvuky" hint="Tiché cvaknutí a krátký tón na konci lekce">
           <Toggle on={s.sound} onChange={(v) => setSettings({ sound: v })} />
-        </Row>
+        </FieldRow>
         {s.sound && (
-          <Row label="Hlasitost">
+          <FieldRow label="Hlasitost">
             <input
               type="range"
               min={0}
@@ -81,12 +81,12 @@ export function Settings() {
               onChange={(e) => setSettings({ volume: Number(e.target.value) })}
               style={{ width: 180 }}
             />
-          </Row>
+          </FieldRow>
         )}
       </Section>
 
       <Section title="Psaní">
-        <Row label="Při překlepu" hint="Jak se aplikace zachová, když stiskneš špatnou klávesu">
+        <FieldRow label="Při překlepu" hint="Jak se aplikace zachová, když stiskneš špatnou klávesu">
           <Segmented<ErrorMode>
             value={s.errorMode}
             onChange={(v) => setSettings({ errorMode: v })}
@@ -95,17 +95,17 @@ export function Settings() {
               ["flow", "Pokračovat dál"],
             ]}
           />
-        </Row>
-        <Row label="Délka skupin" hint="Skupiny ve cvičení mají 1 až tolik znaků">
+        </FieldRow>
+        <FieldRow label="Délka skupin" hint="Skupiny ve cvičení mají 1 až tolik znaků">
           <Stepper value={s.maxGroupLen} min={1} max={8} onChange={(v) => setSettings({ maxGroupLen: v })} />
-        </Row>
-        <Row label="Enter na konci řádku" hint="Každý řádek cvičení se ukončí klávesou Enter">
+        </FieldRow>
+        <FieldRow label="Enter na konci řádku" hint="Každý řádek cvičení se ukončí klávesou Enter">
           <Toggle on={s.enterAtEol} onChange={(v) => setSettings({ enterAtEol: v })} />
-        </Row>
-        <Row label="Střídání rukou" hint="Skupiny upřednostní střídání levé a pravé ruky; vypnuto = čistě náhodné">
+        </FieldRow>
+        <FieldRow label="Střídání rukou" hint="Skupiny upřednostní střídání levé a pravé ruky; vypnuto = čistě náhodné">
           <Toggle on={s.handAlternation} onChange={(v) => setSettings({ handAlternation: v })} />
-        </Row>
-        <Row label="Délka cvičení" hint="Kolik řádků má každá část lekce">
+        </FieldRow>
+        <FieldRow label="Délka cvičení" hint="Kolik řádků má každá část lekce">
           <Segmented<DrillLength>
             value={s.drillLength}
             onChange={(v) => setSettings({ drillLength: v })}
@@ -115,15 +115,15 @@ export function Settings() {
               ["long", "Dlouhé"],
             ]}
           />
-        </Row>
+        </FieldRow>
       </Section>
 
       <Section title="Pomůcky při psaní" >
-        <Row label="Klávesnice na obrazovce">
+        <FieldRow label="Klávesnice na obrazovce">
           <Toggle on={s.scaffold.keyboard} onChange={(v) => setScaffold({ keyboard: v })} />
-        </Row>
+        </FieldRow>
         {s.scaffold.keyboard && (
-          <Row label="Typ klávesnice" hint="Které spodní klávesy (⌘ vs Ctrl) se mají zobrazit">
+          <FieldRow label="Typ klávesnice" hint="Které spodní klávesy (⌘ vs Ctrl) se mají zobrazit">
             <Segmented<KeyboardLayout>
               value={s.keyboardLayout}
               onChange={(v) => setSettings({ keyboardLayout: v })}
@@ -133,17 +133,17 @@ export function Settings() {
                 ["pc", "Windows/PC"],
               ]}
             />
-          </Row>
+          </FieldRow>
         )}
-        <Row label="Barvy prstů">
+        <FieldRow label="Barvy prstů">
           <Toggle on={s.scaffold.fingerColors} onChange={(v) => setScaffold({ fingerColors: v })} />
-        </Row>
-        <Row label="Zvýraznit další klávesu">
+        </FieldRow>
+        <FieldRow label="Zvýraznit další klávesu">
           <Toggle on={s.scaffold.nextKey} onChange={(v) => setScaffold({ nextKey: v })} />
-        </Row>
-        <Row label="Diagram rukou">
+        </FieldRow>
+        <FieldRow label="Diagram rukou">
           <Toggle on={s.scaffold.hands} onChange={(v) => setScaffold({ hands: v })} />
-        </Row>
+        </FieldRow>
       </Section>
 
       <Section title="Záloha a přenos">
@@ -254,24 +254,4 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
-function Row({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) {
-  return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 12,
-        padding: "0.6rem 0",
-        borderBottom: "1px solid var(--border)",
-      }}
-    >
-      <div>
-        <div style={{ fontWeight: 500 }}>{label}</div>
-        {hint && <div style={{ fontSize: "0.8rem", color: "var(--text-soft)" }}>{hint}</div>}
-      </div>
-      <div>{children}</div>
-    </div>
-  );
-}
 

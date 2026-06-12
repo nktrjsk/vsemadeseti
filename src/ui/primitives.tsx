@@ -190,6 +190,40 @@ export function Stepper({
   );
 }
 
+/* A labeled settings/preference row: label (+ optional hint) on the left, the
+ * control on the right, divided by a hairline. `last` drops the trailing
+ * divider. Shared by the Settings screen and the onboarding settings step. */
+export function FieldRow({
+  label,
+  hint,
+  last,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  last?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 12,
+        padding: "0.6rem 0",
+        borderBottom: last ? "none" : "1px solid var(--border)",
+      }}
+    >
+      <div>
+        <div style={{ fontWeight: 500 }}>{label}</div>
+        {hint && <div style={{ fontSize: "0.8rem", color: "var(--text-soft)", marginTop: 2 }}>{hint}</div>}
+      </div>
+      <div>{children}</div>
+    </div>
+  );
+}
+
 export function Progress({ value, label }: { value: number; label?: string }) {
   const pct = Math.round(value * 100);
   return (
