@@ -151,21 +151,24 @@ function PathLegend() {
       ))}
       <button
         onClick={() => setSettings({ pathLegendDismissed: true })}
-        aria-label="Skrýt vysvětlivky"
-        title="Skrýt vysvětlivky"
+        aria-label="Uzavřít nápovědu"
+        title="Uzavřít nápovědu"
         style={{
           border: "none",
           background: "transparent",
           color: "var(--text-soft)",
           cursor: "pointer",
-          fontSize: "0.95rem",
+          fontSize: "0.8rem",
           lineHeight: 1,
           padding: "4px 6px",
           borderRadius: 8,
           fontFamily: "inherit",
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 5,
         }}
       >
-        ×
+        × uzavřít nápovědu
       </button>
     </div>
   );
