@@ -6,6 +6,13 @@ no punishing red. Progress is measured against your own past self.
 
 See [`SPEC.md`](./SPEC.md) for the full product decisions.
 
+## Privacy
+
+**100 % local. No account, no servers, no analytics, no third-party requests —
+nothing you type ever leaves your device.** Progress lives in a local SQLite
+database in your browser; the recovery phrase exists only so *you* can move your
+data to another device. (If cross-device sync ever ships, it will be opt-in.)
+
 ## Stack
 
 - **React 19 + Vite + TypeScript**
@@ -58,8 +65,10 @@ that restyles the whole app — self-hosted so it works offline.
   [`public/fonts/`](./public/fonts) and used for the optional dyslexia-friendly mode.
   Licensed under **CC-BY 3.0** (original fonts © Bitstream); see
   [`public/fonts/OpenDyslexic-LICENSE.txt`](./public/fonts/OpenDyslexic-LICENSE.txt).
-- **Inter** and **Lexend** (UI / drill text) — served via Google Fonts, both under the
-  SIL Open Font License 1.1.
+- **Inter** and **Lexend** (UI / drill text) — self-hosted in
+  [`public/fonts/`](./public/fonts) (latin + latin-ext subsets, variable woff2),
+  both under the SIL Open Font License 1.1; see
+  [`public/fonts/Inter-Lexend-LICENSE.txt`](./public/fonts/Inter-Lexend-LICENSE.txt).
 
 ## Status / not yet done
 
