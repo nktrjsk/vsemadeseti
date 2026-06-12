@@ -10,3 +10,6 @@ npm-debug.log*
 # local design tooling (impeccable skill + its generated output)
 .claude/
 .impeccable/
+
+# Local Netlify folder
+.netlify

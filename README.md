@@ -74,5 +74,6 @@ that restyles the whole app — self-hosted so it works offline.
 
 See the "Open / deferred" section of `SPEC.md` and the notes in code:
 live cross-device sync (currently local-only + recovery-phrase restore),
-English/other layouts, the full Czech corpus, and verification of some
-punctuation/AltGr/dead-key layout details.
+English/other layouts, and the full Czech corpus. (The QWERTZ layout table,
+incl. punctuation and dead keys, is verified against CLDR — see
+`src/data/layout.ts`.)

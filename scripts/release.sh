@@ -48,6 +48,8 @@ say "New version: $TAG"
 # ── Gate ─────────────────────────────────────────────────────────────────────
 say "Gate: type-check + production build"
 npm run build
+say "Gate: every lesson generates valid, typable drills"
+npm run check:content
 say "Build green. Smoke-test the bundle before continuing:"
 echo "    npm run preview   # then run the smoke list in RELEASE.md against it"
 read -r -p $'\nDid the smoke list pass on the built bundle? [y/N] ' ok

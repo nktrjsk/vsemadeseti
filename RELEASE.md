@@ -66,11 +66,12 @@ Explicitly **not** blocking (deferred in SPEC.md): other layouts, Tauri wrapper,
 mascot, the full Czech corpus, live cross-device sync.
 
 - [ ] Full smoke list (above) passes on a prod-like build, incl. installed/offline PWA
-- [ ] Layout details verified for every key the curriculum actually teaches —
-      punctuation, AltGr, dead-key combos produce the right characters
-      (README flags these as unverified)
-- [ ] Every lesson on the path generates valid, typable content to completion
-      (no lesson dead-ends from corpus gaps)
+- [x] Layout verified against CLDR keyboard data (2026-06-12) — Windows matches
+      exactly incl. dead-key compositions; macOS functionally identical for every
+      taught char (details in the `src/data/layout.ts` header note)
+- [x] Every lesson generates valid, typable content — `npm run check:content`
+      samples 30k+ drills across all lessons × settings combos; wired into the
+      release gate (2026-06-12)
 - [ ] One read-through of all user-facing Czech copy (quiet-warm voice, genderless,
       no self-reassurance)
 - [ ] Onboarding tested by someone who isn't you (= the checklist item above)

@@ -6,8 +6,14 @@
  * highlight the right key + finger and tell the learner whether Shift is needed.
  *
  * Finger zones are the standard touch-typing assignment by visual column.
- * NOTE: punctuation/AltGr/dead-key details (§ ú ) ; ´ ˇ and AltGr symbols) are
- * best-effort and flagged for verification against a real Czech keyboard. */
+ *
+ * VERIFIED 2026-06-12 against CLDR keyboard data (release-43, cs-t-k0-windows
+ * + cs-t-k0-osx): base & shift levels match Windows exactly, incl. the dead-key
+ * compositions taught in the deadkeys stage (´+o→ó, ´+u→ú, ˇ+t/n/d→ť/ň/ď).
+ * macOS functional behaviour is identical for every taught character; known
+ * cosmetic diffs on untaught keys only: Mac E00 (left of 1) is \| not ;°, and
+ * the acute dead key (Equal) produces ' standalone on Mac instead of ´ —
+ * same key, same compositions. AltGr symbols are not taught and not mapped. */
 
 export type Finger =
   | "l-pinky"
