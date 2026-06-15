@@ -68,8 +68,8 @@ export function LessonScreen({ lessonId }: { lessonId: string }) {
   };
 
   return (
-    <div style={{ maxWidth: 880, margin: "0 auto", padding: "1rem" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+    <div style={{ maxWidth: 880, margin: "0 auto", padding: "1rem", display: "flex", flexDirection: "column", height: "calc(100dvh - 56px)" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16, flexShrink: 0 }}>
         <Button variant="ghost" onClick={() => navigate("/")}>← Cesta</Button>
         <Pill>{stage.title}</Pill>
         <h2 style={{ margin: 0, fontSize: "1.25rem" }}>{lesson.title}</h2>
@@ -94,10 +94,10 @@ export function LessonScreen({ lessonId }: { lessonId: string }) {
           }
         />
       ) : (
-        <Card>
+        <Card style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column", overflow: "hidden" }}>
           <TypingArea segments={segments} onComplete={handleComplete} resetKey={`${lessonId}:${attempt}`} />
           {(settings.scaffold.keyboard || settings.scaffold.hands) && (
-            <div style={{ marginTop: 18, paddingTop: 14, borderTop: "1px solid var(--border)" }}>
+            <div className="exercise-finger-legend" style={{ marginTop: 18, paddingTop: 14, borderTop: "1px solid var(--border)", flexShrink: 0 }}>
               <FingerLegend />
             </div>
           )}
@@ -125,6 +125,7 @@ function SummaryCard({
   onReplay: () => void;
   onNext?: () => void;
 }) {
+  const { showStats } = useSettings();
   const acc = Math.round(summary.accuracy * 100);
   const delta = Math.round((summary.accuracy - prevBest) * 100);
   const improved = prevBest > 0 && delta >= 1;
@@ -171,10 +172,12 @@ function SummaryCard({
         <p style={{ color: "var(--text-soft)", marginTop: 0 }}>O {delta} % líp než minule.</p>
       )}
 
-      <div style={{ display: "flex", gap: 16, justifyContent: "center", margin: "1.6rem 0" }}>
-        <Stat label="přesnost" value={`${acc} %`} hero />
-        <Stat label="úhozů/min" value={`${Math.round(summary.cpm)}`} />
-      </div>
+      {showStats && (
+        <div style={{ display: "flex", gap: 16, justifyContent: "center", margin: "1.6rem 0" }}>
+          <Stat label="přesnost" value={`${acc} %`} hero />
+          <Stat label="úhozů/min" value={`${Math.round(summary.cpm)}`} />
+        </div>
+      )}
 
       <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
         <Button variant={mastered ? "soft" : "primary"} onClick={onReplay}>↺ Ještě jednou<KeyHint>R</KeyHint></Button>

@@ -13,7 +13,7 @@ import { TOTAL_LESSONS } from "../data/curriculum";
 import { Button, Pill, Progress } from "../ui/primitives";
 import { navigate } from "../lib/router";
 import { setSettings, useSettings } from "../ui/settings";
-import { IconSun } from "../ui/icons";
+import { IconHelp, IconSun } from "../ui/icons";
 
 // Correct Czech pluralisation of "den" (day): 1 → den, 2–4 → dny, else → dní.
 // Intl.PluralRules encodes the CLDR rule so large counts (22, 101…) stay right.
@@ -61,6 +61,9 @@ export function CoursePath() {
     node.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
   }, [done, suggested.id]);
 
+  // Show backup nudge when: ≥3 lessons done, phrase not yet seen, not dismissed
+  const showBackupNudge = done >= 3 && !settings.backupPhraseSeen && !settings.backupNudgeDismissed;
+
   return (
     <div className="cp-page" style={{ margin: "0 auto", padding: "1.5rem 1rem 5rem" }}>
       <style>{PATH_CSS}</style>
@@ -86,7 +89,35 @@ export function CoursePath() {
         <div style={{ marginTop: 14 }}>
           <Progress value={done / TOTAL_LESSONS} label={`Hotovo ${done} z ${TOTAL_LESSONS} lekcí`} />
         </div>
-        {!settings.pathLegendDismissed && <PathLegend />}
+        {settings.pathLegendDismissed ? (
+          <button
+            onClick={() => setSettings({ pathLegendDismissed: false })}
+            aria-label="Zobrazit nápovědu k mapě"
+            title="Zobrazit nápovědu"
+            style={{
+              border: "none",
+              background: "transparent",
+              color: "var(--text-faint)",
+              cursor: "pointer",
+              fontSize: "0.8rem",
+              lineHeight: 1,
+              padding: "4px 0",
+              marginTop: 8,
+              fontFamily: "inherit",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 5,
+            }}
+          >
+            <IconHelp width={14} height={14} />
+            Zobrazit nápovědu
+          </button>
+        ) : (
+          <PathLegend />
+        )}
+        {showBackupNudge && (
+          <BackupNudge onNavigate={() => navigate("/settings")} onDismiss={() => setSettings({ backupNudgeDismissed: true })} />
+        )}
       </header>
 
       {/* One continuous trail: a single spine runs behind every stage so the
@@ -118,6 +149,60 @@ export function CoursePath() {
           </section>
         ))}
       </div>
+    </div>
+  );
+}
+
+/** Quiet one-line nudge to save the recovery phrase once the learner has some progress. */
+function BackupNudge({ onNavigate, onDismiss }: { onNavigate: () => void; onDismiss: () => void }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+        marginTop: 12,
+        fontSize: "0.82rem",
+        color: "var(--text-soft)",
+        flexWrap: "wrap",
+      }}
+    >
+      <span>
+        Až budeš chtít, ulož si obnovovací frázi — přeneseš s ní postup do jiného zařízení.
+      </span>
+      <button
+        onClick={onNavigate}
+        style={{
+          border: "none",
+          background: "transparent",
+          color: "var(--accent-strong)",
+          cursor: "pointer",
+          fontSize: "0.82rem",
+          fontFamily: "inherit",
+          padding: 0,
+          textDecoration: "underline",
+          textUnderlineOffset: 2,
+          textDecorationColor: "var(--accent-soft)",
+        }}
+      >
+        Otevřít nastavení
+      </button>
+      <button
+        onClick={onDismiss}
+        aria-label="Zavřít upozornění na zálohu"
+        style={{
+          border: "none",
+          background: "transparent",
+          color: "var(--text-faint)",
+          cursor: "pointer",
+          fontSize: "0.9rem",
+          lineHeight: 1,
+          padding: "2px 4px",
+          fontFamily: "inherit",
+        }}
+      >
+        ×
+      </button>
     </div>
   );
 }

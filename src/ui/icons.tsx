@@ -131,3 +131,37 @@ export function IconSettings(props: SVGProps<SVGSVGElement>) {
     </Icon>
   );
 }
+
+/** Help — a circle with a question mark inside. */
+export function IconHelp(props: SVGProps<SVGSVGElement>) {
+  return (
+    <Icon {...props}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M9.5 9a2.5 2.5 0 0 1 5 .5c0 1.5-2.5 2-2.5 3.5" />
+      <circle cx="12" cy="16.5" r="0.6" fill="currentColor" stroke="none" />
+    </Icon>
+  );
+}
+
+/** Eye — show statistics. */
+export function IconEye(props: SVGProps<SVGSVGElement>) {
+  return (
+    <Icon {...props}>
+      <path d="M2 12c2-4.8 6-7.5 10-7.5s8 2.7 10 7.5" />
+      <path d="M2 12c2 4.8 6 7.5 10 7.5s8-2.7 10-7.5" />
+      <circle cx="12" cy="12" r="2.8" />
+    </Icon>
+  );
+}
+
+/** EyeOff — hide statistics. */
+export function IconEyeOff(props: SVGProps<SVGSVGElement>) {
+  return (
+    <Icon {...props}>
+      <path d="M2 2l20 20" />
+      <path d="M6.7 6.7A10 10 0 0 0 2 12c2 4.8 6 7.5 10 7.5a10 10 0 0 0 5.3-1.5" />
+      <path d="M10.6 5.6A10 10 0 0 1 12 4.5c4 0 8 2.7 10 7.5a10.6 10.6 0 0 1-2.3 3.2" />
+      <path d="M9.5 9.5a2.8 2.8 0 0 0 4 4" />
+    </Icon>
+  );
+}

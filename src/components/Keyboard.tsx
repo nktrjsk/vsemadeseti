@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { charInfo, FINGER_HAND, rowsFor, type KeyDef, type Platform } from "../data/layout";
 import { FINGER_STYLE } from "../lib/finger";
 import type { Scaffold } from "../ui/settings";
@@ -28,18 +29,20 @@ export function Keyboard({ expected, scaffold, platform }: Props) {
         userSelect: "none",
         display: "flex",
         flexDirection: "column",
-        gap: 6,
-        padding: 10,
+        gap: "calc(var(--ku) * 0.13)",
+        padding: "calc(var(--ku) * 0.22)",
         background: "var(--surface-2)",
-        borderRadius: 16,
+        borderRadius: "calc(var(--ku) * 0.32)",
         border: "1px solid var(--border)",
         width: "100%",
-        maxWidth: 760,
+        maxWidth: 860,
         margin: "0 auto",
-      }}
+        // --ku (key unit) is inherited from the exercise's pinned-bottom region so
+        // the keyboard and hands hint share one scale and shrink/grow together.
+      } as CSSProperties}
     >
       {rows.map((row, ri) => (
-        <div key={ri} style={{ display: "flex", gap: 6 }}>
+        <div key={ri} style={{ display: "flex", gap: "calc(var(--ku) * 0.13)" }}>
           {row.map((k) => (
             <Key
               key={k.code}
@@ -78,13 +81,14 @@ function Key({
         position: "relative",
         flex: `${def.w ?? 1} 1 0`,
         minWidth: 0,
-        height: 44,
-        borderRadius: 9,
+        height: "var(--ku)",
+        borderRadius: "calc(var(--ku) * 0.2)",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        fontSize: "0.95rem",
+        // glyph size tracks the key so the whole keyboard scales as one unit
+        fontSize: "calc(var(--ku) * 0.42)",
         fontWeight: 600,
         color: colored ? fs.text : "var(--text-soft)",
         background: isNext
@@ -108,7 +112,7 @@ function Key({
           ) : (
             <>
               {def.shift && (
-                <span style={{ fontSize: "0.62rem", opacity: 0.55, lineHeight: 1 }}>
+                <span style={{ fontSize: "0.6em", opacity: 0.55, lineHeight: 1 }}>
                   {def.shift}
                 </span>
               )}
@@ -118,7 +122,7 @@ function Key({
         </>
       )}
       {def.label && (
-        <span style={{ fontSize: "0.5rem", opacity: 0.6, lineHeight: 1, marginTop: 2 }}>
+        <span style={{ fontSize: "0.46em", opacity: 0.6, lineHeight: 1, marginTop: "0.12em" }}>
           {def.label}
         </span>
       )}
@@ -127,9 +131,9 @@ function Key({
         <span
           style={{
             position: "absolute",
-            top: 2,
-            right: 4,
-            fontSize: "0.5rem",
+            top: "0.1em",
+            right: "0.24em",
+            fontSize: "0.46em",
             opacity: isNext ? 0.9 : 0.5,
             color: isNext ? "#fff" : fs.solid,
           }}

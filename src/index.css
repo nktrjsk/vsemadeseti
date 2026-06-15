@@ -210,3 +210,13 @@ body {
 .settings-list li::marker {
   color: var(--accent);
 }
+
+/* Short-viewport exercise: on cramped heights the drill text (the most important
+   thing on screen) must not be squeezed to nothing by the keyboard + hands +
+   legend stack. Hide the redundant finger legend (the keys already carry the
+   colour + badge) and tighten the drill-text padding so the passage keeps room.
+   The on-screen keyboard itself shrinks via its viewport-height-capped key unit. */
+@media (max-height: 720px) {
+  .exercise-finger-legend { display: none !important; }
+  .exercise-text { padding-top: 0.4rem !important; padding-bottom: 0.4rem !important; }
+}

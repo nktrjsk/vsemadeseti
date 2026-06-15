@@ -1,11 +1,17 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Button, Card, FieldRow, Segmented, Toggle } from "../ui/primitives";
-import { setSettings, useSettings, type TextSize, type Theme } from "../ui/settings";
+import { setSettings, useSettings, type ErrorMode, type TextSize, type Theme } from "../ui/settings";
 import { navigate } from "../lib/router";
 import { LESSONS } from "../data/curriculum";
 import { IconCompass, IconSettings, IconSprout } from "../ui/icons";
 
-const TOTAL_STEPS = 4;
+// Steps:
+// 0 — Welcome
+// 1 — Appearance (was StepSettings)
+// 2 — Typing behavior (new: misclick mode + stats toggle)
+// 3 — Jak to chodí (StepHow)
+// 4 — Home row (StepHomeRow, last)
+const TOTAL_STEPS = 5;
 
 export function Onboarding() {
   const [i, setI] = useState(0);
@@ -73,9 +79,10 @@ export function Onboarding() {
       )}
       <Card style={{ textAlign: "center", padding: "2.5rem 2rem", width: "100%" }}>
         {i === 0 && <StepWelcome />}
-        {i === 1 && <StepHomeRow />}
-        {i === 2 && <StepSettings />}
+        {i === 1 && <StepAppearance />}
+        {i === 2 && <StepBehavior />}
         {i === 3 && <StepHow />}
+        {i === 4 && <StepHomeRow />}
 
         <div style={{ margin: "1.5rem 0" }}>
           <div style={{ fontSize: "0.8rem", color: "var(--text-soft)", marginBottom: 8 }}>
@@ -238,7 +245,7 @@ function HomeKey({ ch, anchor }: { ch: string; anchor?: boolean }) {
   );
 }
 
-function StepSettings() {
+function StepAppearance() {
   const s = useSettings();
   return (
     <>
@@ -276,6 +283,49 @@ function StepSettings() {
       </div>
       <p style={{ color: "var(--text-soft)", fontSize: "0.85rem", marginTop: 12, marginBottom: 0 }}>
         Všechno jde později změnit v Nastavení.
+      </p>
+    </>
+  );
+}
+
+const MISCLICK_HINTS: Record<ErrorMode, string> = {
+  block: "Špatná klávesa se na chvíli ukáže a počká, než napíšeš tu správnou.",
+  flow: "Píšeš plynule dál; překlepy se označí a započítají.",
+};
+
+function StepBehavior() {
+  const s = useSettings();
+  return (
+    <>
+      <StepIcon><IconCompass width={40} height={40} /></StepIcon>
+      <StepTitle>Nastav si psaní</StepTitle>
+      <div style={{ textAlign: "left", margin: "0 auto", maxWidth: 400 }}>
+        <FieldRow label="Po překlepu:">
+          <Segmented<ErrorMode>
+            value={s.errorMode}
+            onChange={(v) => setSettings({ errorMode: v })}
+            options={[
+              ["block", "Oprava na místě"],
+              ["flow", "Označit a psát dál"],
+            ]}
+          />
+        </FieldRow>
+        <div
+          style={{
+            fontSize: "0.82rem",
+            color: "var(--text-soft)",
+            marginBottom: 12,
+            textAlign: "left",
+          }}
+        >
+          {MISCLICK_HINTS[s.errorMode]}
+        </div>
+        <FieldRow label="Zobrazovat rychlost a přesnost" last>
+          <Toggle on={s.showStats} onChange={(v) => setSettings({ showStats: v })} />
+        </FieldRow>
+      </div>
+      <p style={{ color: "var(--text-soft)", fontSize: "0.85rem", marginTop: 12, marginBottom: 0 }}>
+        Obojí lze kdykoli změnit v nastavení nebo přímo při cvičení.
       </p>
     </>
   );

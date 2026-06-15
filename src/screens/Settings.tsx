@@ -34,6 +34,7 @@ export function Settings() {
 
   const copyPhrase = () => {
     if (!mnemonic) return;
+    setSettings({ backupPhraseSeen: true });
     void navigator.clipboard?.writeText(mnemonic).then(() => {
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1800);
@@ -106,15 +107,23 @@ export function Settings() {
       </Section>
 
       <Section title="Psaní">
-        <FieldRow label="Při překlepu" hint="Jak se aplikace zachová, když stiskneš špatnou klávesu">
+        <FieldRow
+          label="Po překlepu:"
+          hint={s.errorMode === "block"
+            ? "Špatná klávesa se na chvíli ukáže a počká, než napíšeš tu správnou."
+            : "Píšeš plynule dál; překlepy se označí a započítají."}
+        >
           <Segmented<ErrorMode>
             value={s.errorMode}
             onChange={(v) => setSettings({ errorMode: v })}
             options={[
-              ["block", "Počkat na správnou"],
-              ["flow", "Pokračovat dál"],
+              ["block", "Oprava na místě"],
+              ["flow", "Označit a psát dál"],
             ]}
           />
+        </FieldRow>
+        <FieldRow label="Zobrazovat rychlost a přesnost" hint="Živé počitadlo úhozů/min a přesnosti při cvičení">
+          <Toggle on={s.showStats} onChange={(v) => setSettings({ showStats: v })} />
         </FieldRow>
         <FieldRow label="Délka skupin" hint="Skupiny ve cvičení mají 1 až tolik znaků">
           <Stepper value={s.maxGroupLen} min={1} max={8} onChange={(v) => setSettings({ maxGroupLen: v })} />
@@ -176,7 +185,11 @@ export function Settings() {
             <strong>Obnovovací fráze</strong>
             <div style={{ display: "flex", gap: 6 }}>
               <Button variant="ghost" onClick={copyPhrase}>{copied ? "Zkopírováno ✓" : "Kopírovat"}</Button>
-              <Button variant="ghost" onClick={() => setShowPhrase((v) => !v)}>
+              <Button variant="ghost" onClick={() => {
+                const next = !showPhrase;
+                setShowPhrase(next);
+                if (next) setSettings({ backupPhraseSeen: true });
+              }}>
                 {showPhrase ? "Skrýt" : "Zobrazit"}
               </Button>
             </div>

@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { charInfo, FINGER_LABEL_CS } from "../data/layout";
 import { FINGER_STYLE } from "../lib/finger";
 
@@ -15,8 +16,18 @@ export function HandsHint({ expected }: { expected: string | null }) {
   const usesThumb = activeFinger === "thumb";
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
-      <div style={{ display: "flex", gap: 28 }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 8,
+        // hands scale off the keyboard's key unit so the two stay proportional
+        // and shrink/grow together
+        "--hand-w": "calc(var(--ku, 44px) * 1.5)",
+      } as CSSProperties}
+    >
+      <div style={{ display: "flex", gap: "calc(var(--hand-w) * 0.34)" }}>
         <Hand side="left" active={activeFinger} thumb={usesThumb} />
         <Hand side="right" active={activeFinger} thumb={usesThumb} />
       </div>
@@ -48,7 +59,12 @@ function Hand({
   const fingers = HAND_FINGERS[side];
   const thumbActive = thumb && (side === "left"); // show on one thumb only
   return (
-    <svg width="86" height="92" viewBox="0 0 86 92" role="img" aria-hidden>
+    <svg
+      viewBox="0 0 86 92"
+      role="img"
+      aria-hidden
+      style={{ width: "var(--hand-w)", height: "calc(var(--hand-w) * 1.07)", display: "block" }}
+    >
       {/* palm */}
       <rect x="14" y="52" width="58" height="34" rx="14" fill="var(--surface-2)" stroke="var(--border)" />
       {/* four fingers */}

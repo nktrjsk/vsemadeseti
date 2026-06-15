@@ -108,7 +108,7 @@ const RAW: RawStage[] = [
   },
   {
     id: "deadkeys",
-    title: "Mrtvé klávesy",
+    title: "Háčky a čárky",
     subtitle: "Háček a čárka — ó ť ň ď ú",
     lessons: [
       { title: "ú, ó", keys: ["ú", "ó"] },

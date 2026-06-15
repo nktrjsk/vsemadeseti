@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useTypingSession } from "../engine/useTypingSession";
-import { setScaffold, useSettings } from "../ui/settings";
-import { IconRestart, IconSettings } from "../ui/icons";
+import { setScaffold, setSettings, useSettings } from "../ui/settings";
+import { IconEye, IconEyeOff, IconRestart, IconSettings } from "../ui/icons";
 import { resolveKeyboardPlatform } from "../lib/platform";
 import { Keyboard } from "./Keyboard";
 import { HandsHint } from "./HandsHint";
@@ -101,7 +101,7 @@ export function TypingArea({
   return (
     <div
       onClick={() => session.ref.current?.focus()}
-      style={{ display: "flex", flexDirection: "column", gap: 18 }}
+      style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}
     >
       {/* hidden input that actually receives keystrokes (incl. dead keys) */}
       <textarea
@@ -126,16 +126,49 @@ export function TypingArea({
         }}
       />
 
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+      {/* Upper region: header + progress + the two-line text window. No scroll —
+          the text shows only the current line and the next; finished lines drop
+          away (see TextDisplay), so it never grows or needs to scroll. */}
+      <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column", gap: 18, padding: "0 0 8px" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexShrink: 0 }}>
         <Pill>
           {current.label} · {idx + 1}/{segments.length}
         </Pill>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          {showStats && session.started && (
+          {/* Live stats pills: only when component prop allows AND global setting is on */}
+          {showStats && settings.showStats && session.started && (
             <>
               <Pill tone="good">přesnost {Math.round(session.accuracy * 100)} %</Pill>
               <Pill>{Math.round(session.cpm)} úhozů/min</Pill>
             </>
+          )}
+          {/* Eye toggle: only render when the component prop allows stats (i.e. not forced off) */}
+          {showStats && (
+            <button
+              aria-label={settings.showStats ? "Skrýt rychlost a přesnost" : "Zobrazit rychlost a přesnost"}
+              title={settings.showStats ? "Skrýt rychlost a přesnost" : "Zobrazit rychlost a přesnost"}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={(e) => {
+                e.stopPropagation();
+                setSettings({ showStats: !settings.showStats });
+              }}
+              style={{
+                border: "1px solid var(--border)",
+                background: settings.showStats ? "var(--accent-soft)" : "var(--surface-2)",
+                color: settings.showStats ? "var(--accent-strong)" : "var(--text-soft)",
+                borderRadius: 999,
+                width: 32,
+                height: 32,
+                cursor: "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {settings.showStats
+                ? <IconEye width={16} height={16} />
+                : <IconEyeOff width={16} height={16} />}
+            </button>
           )}
           <button
             aria-label="Začít tento krok znovu"
@@ -219,36 +252,69 @@ export function TypingArea({
 
       <Progress value={segments.length > 1 ? (idx + session.pos / Math.max(1, current.text.length)) / segments.length : session.pos / Math.max(1, current.text.length)} />
 
-      <div style={{ padding: "1.5rem 0", minHeight: 130 }}>
-        <TextDisplay items={session.items} justErrored={session.justErrored} showEnter={settings.enterAtEol} />
-      </div>
-
-      {settings.scaffold.hands && <HandsHint expected={session.expected} />}
-      {settings.scaffold.keyboard && (
-        <Keyboard
-          expected={session.expected}
-          scaffold={settings.scaffold}
-          platform={resolveKeyboardPlatform(settings.keyboardLayout)}
+      {/* The two-line text window, centered in the available space so the
+          keyboard never looks stranded below a void. */}
+      <div
+        className="exercise-text"
+        style={{
+          padding: "0.5rem 0",
+          flex: 1,
+          minHeight: 0,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          overflow: "hidden",
+        }}
+      >
+        <TextDisplay
+          items={session.items}
+          justErrored={session.justErrored}
+          wrongGhost={session.wrongGhost}
+          showEnter={settings.enterAtEol}
         />
-      )}
+      </div>
+      </div>{/* end upper region */}
 
-      <div style={{ display: "flex", justifyContent: "center", gap: 10, flexWrap: "wrap" }}>
-        <Button
-          variant="ghost"
-          onMouseDown={(e) => e.preventDefault()}
-          onClick={() => setScaffold({ keyboard: !settings.scaffold.keyboard })}
-          style={{ fontSize: "0.85rem", padding: "0.3rem 0.8rem" }}
-        >
-          {settings.scaffold.keyboard ? "Skrýt klávesnici" : "Zobrazit klávesnici"}
-        </Button>
-        <Button
-          variant="ghost"
-          onMouseDown={(e) => e.preventDefault()}
-          onClick={() => setScaffold({ hands: !settings.scaffold.hands })}
-          style={{ fontSize: "0.85rem", padding: "0.3rem 0.8rem" }}
-        >
-          {settings.scaffold.hands ? "Skrýt ruce" : "Zobrazit ruce"}
-        </Button>
+      {/* Pinned-bottom region: hands hint + keyboard + scaffold toggles.
+          container-type lets the keyboard/hands size themselves with cqw against
+          this region's width. --ku (the key unit) is defined here so the keyboard
+          AND the hands inherit the SAME scale and shrink/grow together: width-driven
+          (cqw), capped by viewport height (dvh) so they never crowd out the drill
+          text, and clamped for tiny/huge screens. */}
+      <div
+        style={{
+          flexShrink: 0,
+          containerType: "inline-size",
+          "--ku": "clamp(22px, min(5.6cqw, 4.6dvh), 50px)",
+        } as CSSProperties}
+      >
+        {settings.scaffold.hands && <HandsHint expected={session.expected} />}
+        {settings.scaffold.keyboard && (
+          <Keyboard
+            expected={session.expected}
+            scaffold={settings.scaffold}
+            platform={resolveKeyboardPlatform(settings.keyboardLayout)}
+          />
+        )}
+
+        <div style={{ display: "flex", justifyContent: "center", gap: 10, flexWrap: "wrap", marginTop: 8 }}>
+          <Button
+            variant="ghost"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => setScaffold({ keyboard: !settings.scaffold.keyboard })}
+            style={{ fontSize: "0.85rem", padding: "0.3rem 0.8rem" }}
+          >
+            {settings.scaffold.keyboard ? "Skrýt klávesnici" : "Zobrazit klávesnici"}
+          </Button>
+          <Button
+            variant="ghost"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => setScaffold({ hands: !settings.scaffold.hands })}
+            style={{ fontSize: "0.85rem", padding: "0.3rem 0.8rem" }}
+          >
+            {settings.scaffold.hands ? "Skrýt ruce" : "Zobrazit ruce"}
+          </Button>
+        </div>
       </div>
     </div>
   );

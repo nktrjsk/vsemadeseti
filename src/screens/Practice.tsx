@@ -21,13 +21,15 @@ export function Practice() {
 
   if (text != null) {
     return (
-      <div style={{ maxWidth: 880, margin: "0 auto", padding: "1rem" }}>
-        <div style={{ display: "flex", gap: 10, marginBottom: 14, alignItems: "center" }}>
+      <div style={{ maxWidth: 880, margin: "0 auto", padding: "1rem", display: "flex", flexDirection: "column", height: "calc(100dvh - 56px)" }}>
+        <div style={{ display: "flex", gap: 10, marginBottom: 14, alignItems: "center", flexShrink: 0 }}>
           <Button variant="ghost" onClick={() => setText(null)}>← Zpět</Button>
           <Pill>Volné psaní</Pill>
         </div>
-        <Card>
-          <TypingArea segments={[{ label: "Text", text }]} />
+        <Card style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+          {/* Volné psaní is for flow, not measurement — no score, no eye toggle.
+              Pinned-keyboard layout matters most here: pasted passages can be long. */}
+          <TypingArea segments={[{ label: "Text", text }]} showStats={false} />
         </Card>
       </div>
     );

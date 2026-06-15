@@ -28,6 +28,8 @@ export interface TypingState {
   finished: boolean;
   started: boolean;
   justErrored: boolean;
+  /** In block mode: the wrong character just typed, shown briefly at the cursor slot. */
+  wrongGhost: string | null;
   errors: number;
   correct: number;
   accuracy: number; // 0..1
@@ -72,6 +74,7 @@ export function useTypingSession({
   const [wrongSet, setWrongSet] = useState<Set<number>>(() => new Set());
   const [finished, setFinished] = useState(false);
   const [justErrored, setJustErrored] = useState(false);
+  const [wrongGhost, setWrongGhost] = useState<string | null>(null);
   const [errors, setErrors] = useState(0);
   const [correct, setCorrect] = useState(0);
   const [, forceTick] = useState(0);
@@ -88,6 +91,7 @@ export function useTypingSession({
     setErrors(0);
     setCorrect(0);
     setJustErrored(false);
+    setWrongGhost(null);
     startRef.current = null;
     endRef.current = null;
     tally.current = new Map();
@@ -126,6 +130,14 @@ export function useTypingSession({
 
       const isCorrect = input === expected;
       if (isCorrect) {
+        // clear any pending block-mode error flash so the wrong-char ghost
+        // can't linger onto the next cell after a correct keystroke
+        if (errorFlashTimer.current) {
+          window.clearTimeout(errorFlashTimer.current);
+          errorFlashTimer.current = null;
+        }
+        setWrongGhost(null);
+        setJustErrored(false);
         bump(expected, true);
         setCorrect((c) => c + 1);
         sound.key();
@@ -142,14 +154,19 @@ export function useTypingSession({
         sound.miss();
         setJustErrored(true);
         if (errorFlashTimer.current) window.clearTimeout(errorFlashTimer.current);
-        errorFlashTimer.current = window.setTimeout(() => setJustErrored(false), 320);
+        errorFlashTimer.current = window.setTimeout(() => {
+          setJustErrored(false);
+          setWrongGhost(null);
+        }, 320);
         if (errorMode === "flow") {
           setWrongSet((s) => new Set(s).add(pos));
           const next = requireEnter ? pos + 1 : skipNewlines(target, pos + 1);
           setPos(next);
           if (next >= target.length) finish();
+        } else {
+          // block mode: briefly show the wrong character at the cursor slot
+          setWrongGhost(input);
         }
-        // block mode: do not advance
       }
     },
     [finished, target, pos, bump, finish, errorMode, requireEnter],
@@ -233,6 +250,7 @@ export function useTypingSession({
     finished,
     started: startRef.current != null,
     justErrored,
+    wrongGhost,
     errors,
     correct,
     accuracy,

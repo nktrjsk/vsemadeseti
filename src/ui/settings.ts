@@ -41,6 +41,12 @@ export interface Settings {
   handAlternation: boolean;
   /** the course-path legend („✓ hotovo · › tady jsi …") was dismissed */
   pathLegendDismissed: boolean;
+  /** show live speed/accuracy pills during typing and numeric results in summary */
+  showStats: boolean;
+  /** the learner has revealed or copied the recovery phrase */
+  backupPhraseSeen: boolean;
+  /** the backup nudge banner on the course path was dismissed */
+  backupNudgeDismissed: boolean;
 }
 
 const DEFAULTS: Settings = {
@@ -58,6 +64,9 @@ const DEFAULTS: Settings = {
   drillLength: "normal",
   handAlternation: true,
   pathLegendDismissed: false,
+  showStats: false,
+  backupPhraseSeen: false,
+  backupNudgeDismissed: false,
 };
 
 const KEY = "vsemadeseti.settings";
