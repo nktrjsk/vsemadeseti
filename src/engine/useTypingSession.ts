@@ -187,12 +187,20 @@ export function useTypingSession({
     });
   }, [errorMode, finished, target, requireEnter]);
 
-  // attach beforeinput listener to the hidden field
+  // attach input listeners to the hidden field
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    // Czech dead keys (´+o→ó, ˇ+t→ť, …) don't arrive as a plain insertText — the
+    // OS composes them, so the character is delivered through composition events.
+    // We read the final glyph from compositionend and ignore the in-flight
+    // beforeinput events (isComposing / insertCompositionText) so it isn't
+    // processed twice. Directly-typed characters still come via insertText.
+    let composing = false;
+
     const onBeforeInput = (e: Event) => {
       const ie = e as InputEvent;
+      if (ie.isComposing || composing || ie.inputType === "insertCompositionText") return;
       e.preventDefault();
       switch (ie.inputType) {
         case "insertText":
@@ -207,8 +215,25 @@ export function useTypingSession({
           break;
       }
     };
+    const onCompositionStart = () => {
+      composing = true;
+    };
+    const onCompositionEnd = (e: Event) => {
+      composing = false;
+      const data = (e as CompositionEvent).data;
+      if (data) for (const ch of data) handleChar(ch);
+      // keep the hidden field empty so composed text can't accumulate in it
+      el.value = "";
+    };
+
     el.addEventListener("beforeinput", onBeforeInput);
-    return () => el.removeEventListener("beforeinput", onBeforeInput);
+    el.addEventListener("compositionstart", onCompositionStart);
+    el.addEventListener("compositionend", onCompositionEnd);
+    return () => {
+      el.removeEventListener("beforeinput", onBeforeInput);
+      el.removeEventListener("compositionstart", onCompositionStart);
+      el.removeEventListener("compositionend", onCompositionEnd);
+    };
   }, [handleChar, handleBackspace]);
 
   // live CPM ticking while active
