@@ -2,6 +2,10 @@
 
 All notable changes, newest first. Source of truth; user-facing notes are distilled from this.
 
+## 2026.06.1 — 2026-06-16
+
+- Recovery screen: if the app ever fails to load, it now shows a calm "Načíst znovu" screen instead of a blank page, and one tap refreshes to a clean version. Your progress stays on the device.
+
 ## 2026.06 — 2026-06-16
 
 First public release.
