@@ -1,0 +1,28 @@
+# Všema deseti
+
+> A local-first touch-typing trainer for the Czech QWERTZ keyboard, for self-directed learners of any age. Self-paced and free; no account, no email. Positively motivating rather than competitive — progress is measured against your own past, never against other people.
+
+Všema deseti ("with all ten [fingers]") teaches Czech touch typing: the home and
+letter rows, capitals, the diacritic number row `ěščřžýáíé`, digits, dead keys
+(`´` `ˇ`), and punctuation, on the Czech QWERTZ layout. It runs entirely in the browser as an offline-capable PWA; all data
+stays on the device (Evolu / local SQLite). Optional cross-device sync is via a
+generated recovery phrase, off by default.
+
+The interface is in Czech.
+
+## What it offers
+- A soft-suggested course path (~30–45 lessons across 7 stages) — nothing is locked; every lesson stays reachable and replayable.
+- Targeted weak-key drills generated from your most-missed keys.
+- Free practice on a provided passage or your own pasted text.
+- A relaxed playground with finger guides and no tracking.
+- Informational metrics only: accuracy and CPM (úhozy/min), framed as growth over your own past — no leaderboards, ranks, percentiles, streak penalties, or timers.
+
+## For
+Adults, teens, and children learning to touch-type in Czech, on their own, at home.
+
+## Access
+- App: https://vsemadeseti.netlify.app/
+
+## Notes for agents
+- Single-page app (hash-routed); the URL above is the only crawlable entry point.
+- Free to use, no sign-up, works offline after first load.
