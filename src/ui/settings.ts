@@ -5,6 +5,7 @@ import type { KeyboardLayout } from "../lib/platform";
 
 export type Theme = "system" | "light" | "dark";
 export type TextSize = "normal" | "large" | "larger";
+export type PracticeFont = "lexend" | "mono";
 export type ErrorMode = "block" | "flow";
 export type DrillLength = "short" | "normal" | "long";
 
@@ -26,6 +27,8 @@ export interface Settings {
   theme: Theme;
   textSize: TextSize;
   dyslexia: boolean;
+  /** font for the practice text: Lexend (readability-tuned) or monospace */
+  practiceFont: PracticeFont;
   sound: boolean;
   volume: number; // 0..1
   errorMode: ErrorMode;
@@ -53,6 +56,7 @@ const DEFAULTS: Settings = {
   theme: "system",
   textSize: "normal",
   dyslexia: false,
+  practiceFont: "lexend",
   sound: true,
   volume: 0.5,
   errorMode: "block",
@@ -119,6 +123,7 @@ export function applyDom(s: Settings): void {
   root.setAttribute("data-theme", theme);
   root.setAttribute("data-textsize", s.textSize);
   root.setAttribute("data-dyslexia", s.dyslexia ? "on" : "off");
+  root.setAttribute("data-practicefont", s.practiceFont);
 }
 
 // react to OS theme changes while in "system" mode

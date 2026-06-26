@@ -7,6 +7,7 @@ import {
   useSettings,
   type DrillLength,
   type ErrorMode,
+  type PracticeFont,
   type TextSize,
   type Theme,
 } from "../ui/settings";
@@ -85,6 +86,18 @@ export function Settings() {
         <FieldRow label="Písmo pro dyslektiky" hint="Lépe rozlišitelná písmena v textu cvičení">
           <Toggle on={s.dyslexia} onChange={(v) => setSettings({ dyslexia: v })} />
         </FieldRow>
+        {!s.dyslexia && (
+          <FieldRow label="Písmo cvičení" hint="Každý znak stejně široký — pomáhá udržet rytmus a rozlišit podobné znaky" last>
+            <Segmented<PracticeFont>
+              value={s.practiceFont}
+              onChange={(v) => setSettings({ practiceFont: v })}
+              options={[
+                ["lexend", "Čitelné"],
+                ["mono", "Mono"],
+              ]}
+            />
+          </FieldRow>
+        )}
       </Section>
 
       <Section title="Zvuk">
