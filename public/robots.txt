@@ -36,4 +36,4 @@ Allow: /
 User-agent: Applebot-Extended
 Allow: /
 
-Sitemap: https://vsemadeseti.netlify.app/sitemap.xml
+Sitemap: https://vsemadeseti.cz/sitemap.xml

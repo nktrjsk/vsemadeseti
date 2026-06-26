@@ -50,6 +50,8 @@ export interface Settings {
   backupPhraseSeen: boolean;
   /** the backup nudge banner on the course path was dismissed */
   backupNudgeDismissed: boolean;
+  /** the vsemadeseti.cz origin-migration note was dismissed */
+  migrationNoteDismissed: boolean;
 }
 
 const DEFAULTS: Settings = {
@@ -71,6 +73,7 @@ const DEFAULTS: Settings = {
   showStats: false,
   backupPhraseSeen: false,
   backupNudgeDismissed: false,
+  migrationNoteDismissed: false,
 };
 
 const KEY = "vsemadeseti.settings";

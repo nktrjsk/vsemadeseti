@@ -37,8 +37,10 @@ A failed item **blocks** the release — fix or descope, never waive.
 
 ## Launch checklist (first public release only — delete this section once empty)
 
-- [x] Name and domain settled — `vsemadeseti.netlify.app` (existing site, linked
-      2026-06-12); custom domain can come later, but PWA installs pin to the origin.
+- [x] Name and domain settled — custom domain `vsemadeseti.cz` (migrated
+      2026-06-26 from the original `vsemadeseti.netlify.app`). PWA installs and all
+      local-first data pin to the origin, so the new domain is a fresh origin —
+      see the origin-migration note below.
       **Rollback verified** 2026-06-12: published the previous deploy, confirmed prod
       served the old bundle, restored the current one.
 - [x] **Git-triggered builds turned OFF** (`stop_builds`, 2026-06-12) — pushes to main

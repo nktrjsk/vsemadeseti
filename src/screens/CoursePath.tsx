@@ -64,6 +64,16 @@ export function CoursePath() {
   // Show backup nudge when: ≥3 lessons done, phrase not yet seen, not dismissed
   const showBackupNudge = done >= 3 && !settings.backupPhraseSeen && !settings.backupNudgeDismissed;
 
+  // Origin-migration note: local-first data is per-origin, so a learner arriving
+  // on the new vsemadeseti.cz domain lands with an empty slate (done === 0). Offer
+  // the recovery-phrase bridge — but only on that origin, and only during the
+  // migration window, after which it retires itself and never bothers newcomers.
+  const showMigrationNote =
+    firstRun &&
+    !settings.migrationNoteDismissed &&
+    onMigrationOrigin() &&
+    new Date() < MIGRATION_NOTE_UNTIL;
+
   return (
     <div className="cp-page" style={{ margin: "0 auto", padding: "1.5rem 1rem 5rem" }}>
       <style>{PATH_CSS}</style>
@@ -89,6 +99,12 @@ export function CoursePath() {
         <div style={{ marginTop: 14 }}>
           <Progress value={done / TOTAL_LESSONS} label={`Hotovo ${done} z ${TOTAL_LESSONS} lekcí`} />
         </div>
+        {showMigrationNote && (
+          <MigrationNote
+            onNavigate={() => navigate("/settings")}
+            onDismiss={() => setSettings({ migrationNoteDismissed: true })}
+          />
+        )}
         {settings.pathLegendDismissed ? (
           <button
             onClick={() => setSettings({ pathLegendDismissed: false })}
@@ -149,6 +165,66 @@ export function CoursePath() {
           </section>
         ))}
       </div>
+    </div>
+  );
+}
+
+// The migration note belongs only to the new custom domain, and only for the
+// months following the move (2026-06-26). Past this it stops appearing for good.
+const MIGRATION_NOTE_UNTIL = new Date("2027-01-01");
+function onMigrationOrigin(): boolean {
+  return typeof location !== "undefined" && location.hostname.endsWith("vsemadeseti.cz");
+}
+
+/** Quiet one-line note for learners arriving on the new vsemadeseti.cz origin:
+ * their progress lives on the old origin and is brought across by the phrase. */
+function MigrationNote({ onNavigate, onDismiss }: { onNavigate: () => void; onDismiss: () => void }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+        marginTop: 12,
+        fontSize: "0.82rem",
+        color: "var(--text-soft)",
+        flexWrap: "wrap",
+      }}
+    >
+      <span>Přicházíš z původní adresy? Svůj postup sem přeneseš obnovovací frází.</span>
+      <button
+        onClick={onNavigate}
+        style={{
+          border: "none",
+          background: "transparent",
+          color: "var(--accent-strong)",
+          cursor: "pointer",
+          fontSize: "0.82rem",
+          fontFamily: "inherit",
+          padding: 0,
+          textDecoration: "underline",
+          textUnderlineOffset: 2,
+          textDecorationColor: "var(--accent-soft)",
+        }}
+      >
+        Otevřít nastavení
+      </button>
+      <button
+        onClick={onDismiss}
+        aria-label="Zavřít upozornění na přenos"
+        style={{
+          border: "none",
+          background: "transparent",
+          color: "var(--text-faint)",
+          cursor: "pointer",
+          fontSize: "0.9rem",
+          lineHeight: 1,
+          padding: "2px 4px",
+          fontFamily: "inherit",
+        }}
+      >
+        ×
+      </button>
     </div>
   );
 }

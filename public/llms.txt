@@ -21,7 +21,7 @@ The interface is in Czech.
 Adults, teens, and children learning to touch-type in Czech, on their own, at home.
 
 ## Access
-- App: https://vsemadeseti.netlify.app/
+- App: https://vsemadeseti.cz/
 
 ## Notes for agents
 - Single-page app (hash-routed); the URL above is the only crawlable entry point.
