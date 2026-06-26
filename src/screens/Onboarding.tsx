@@ -7,9 +7,10 @@ import { IconCompass, IconSettings, IconSprout } from "../ui/icons";
 
 // Steps:
 // 0 — Welcome
-// 1 — Appearance (was StepSettings)
-// 2 — Typing behavior (new: misclick mode + stats toggle)
-// 3 — Jak to chodí (StepHow)
+// 1 — Jak to chodí (StepHow) — conceptual framing, before any settings;
+//      must stay mode-agnostic since error mode isn't chosen until step 3
+// 2 — Appearance (was StepSettings)
+// 3 — Typing behavior (misclick mode + stats toggle)
 // 4 — Home row (StepHomeRow, last)
 const TOTAL_STEPS = 5;
 
@@ -79,9 +80,9 @@ export function Onboarding() {
       )}
       <Card style={{ textAlign: "center", padding: "2.5rem 2rem", width: "100%" }}>
         {i === 0 && <StepWelcome />}
-        {i === 1 && <StepAppearance />}
-        {i === 2 && <StepBehavior />}
-        {i === 3 && <StepHow />}
+        {i === 1 && <StepHow />}
+        {i === 2 && <StepAppearance />}
+        {i === 3 && <StepBehavior />}
         {i === 4 && <StepHomeRow />}
 
         <div style={{ margin: "1.5rem 0" }}>
@@ -337,8 +338,8 @@ function StepHow() {
       <StepIcon><IconCompass width={40} height={40} /></StepIcon>
       <StepTitle>Jak to chodí</StepTitle>
       <StepBody>
-        Aplikace ukazuje další klávesu i prst, kterým ji stisknout. Překlep nic nepokazí — jen ho
-        opravíš a pokračuješ. Pomůcky i chování jdou upravit v nastavení.
+        Aplikace ukazuje další klávesu i prst, kterým ji stisknout. Překlep nic nepokazí — patří
+        k učení. Pomůcky i chování jdou upravit v nastavení.
       </StepBody>
     </>
   );
