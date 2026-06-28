@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { navigate, useRoute, parseRoute } from "../lib/router";
 import {
+  IconGithub,
   IconLeaf,
   IconPen,
   IconRoute,
@@ -8,6 +9,8 @@ import {
   IconSprout,
   IconTarget,
 } from "../ui/icons";
+
+const REPO_URL = "https://github.com/nktrjsk/vsemadeseti";
 
 const NAV: [string, string, () => ReactNode][] = [
   ["/", "Cesta", () => <IconRoute />],
@@ -90,6 +93,33 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </header>
       <main id="main" tabIndex={-1} style={{ flex: 1, outline: "none" }}>{children}</main>
+      <footer
+        style={{
+          borderTop: "1px solid var(--border)",
+          padding: "1rem",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <a
+          href={REPO_URL}
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Zdrojový kód na GitHubu"
+          title="Zdrojový kód na GitHubu"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+            color: "var(--text-soft)",
+            textDecoration: "none",
+            fontSize: "0.85rem",
+          }}
+        >
+          <IconGithub width={18} height={18} />
+          <span>Otevřený zdroj na GitHubu</span>
+        </a>
+      </footer>
       <style>{`@media (max-width:640px){.nav-label{display:none !important}}`}</style>
     </div>
   );
