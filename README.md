@@ -1,10 +1,41 @@
-# vsemadeseti
+<div align="center">
 
-A calm, **local-first** touch-typing trainer for **Czech (QWERTZ)** — for all ages,
-self-paced. **Positively motivating, not competitive:** no leaderboards, no ranks,
-no punishing red. Progress is measured against your own past self.
+<img src="public/icon.svg" width="84" height="84" alt="Všema deseti logo" />
 
-See [`SPEC.md`](./SPEC.md) for the full product decisions.
+# Všema deseti
+
+**A calm, local-first touch-typing trainer for Czech (QWERTZ).**
+For all ages, self-paced. Positively motivating, never competitive —
+no leaderboards, no ranks, no punishing red.
+
+[**vsemadeseti.cz →**](https://vsemadeseti.cz)  ·  free  ·  runs in the browser, no account
+
+<img src="public/og-image.png" width="640" alt="Všema deseti — a lesson with the finger-coded on-screen keyboard" />
+
+</div>
+
+---
+
+Progress is measured against your own past self, not against other people. The
+interface behaves like a patient teacher seated beside you: it points to the right
+key, never raises its voice, and when you stumble it leans in with a warm nudge —
+a gentle ochre cue, never a red mark. Polished enough for an adult, unintimidating
+for a child; the two audiences share one calm register.
+
+See [`SPEC.md`](./SPEC.md) for the full product decisions and [`DESIGN.md`](./DESIGN.md)
+for the design system.
+
+## Screenshots
+
+|  |  |
+| :--: | :--: |
+| **Cesta** — your typing path | **Lekce** — a lesson in progress |
+| ![The course path](docs/screenshots/cesta.png) | ![A lesson with the on-screen keyboard](docs/screenshots/lekce.png) |
+| **Doladit** — drills for your weakest keys | **Hřiště** — a no-tracking playground |
+| ![Targeted drills for missed keys](docs/screenshots/doladit.png) | ![Free playground with finger guides](docs/screenshots/hriste.png) |
+
+The on-screen keyboard is color-coded by finger (each zone has a hue **and** a glyph
+badge, so it stays readable for color-blind users) and highlights the next key to press.
 
 ## Privacy
 
@@ -12,6 +43,13 @@ See [`SPEC.md`](./SPEC.md) for the full product decisions.
 nothing you type ever leaves your device.** Progress lives in a local SQLite
 database in your browser; the recovery phrase exists only so *you* can move your
 data to another device. (If cross-device sync ever ships, it will be opt-in.)
+
+## Modes
+
+- **Cesta** — the structured course (a soft-suggested path; nothing is locked)
+- **Volné psaní** — type a provided passage or paste your own text
+- **Doladit** — targeted drills built from your most-missed keys
+- **Hřiště** — a relaxed playground with finger guides and zero tracking
 
 ## Stack
 
@@ -46,18 +84,20 @@ npm run typecheck
 - **Progress** lives in Evolu (`src/db/`); device preferences (theme, sound,
   scaffolding) live in `localStorage` (`src/ui/settings.ts`).
 
-## Modes
-
-- **Cesta** — the structured course (soft-suggested path; nothing locked)
-- **Volné psaní** — type a provided passage or paste your own text
-- **Doladit** — targeted drills built from your most-missed keys
-- **Hřiště** — relaxed playground with finger guides, zero tracking
-
 ## Accessibility
 
 Color-blind-safe finger coding (hue **+** glyph badge), dark/light/system themes,
-adjustable text size, and an optional **dyslexia-friendly font** ([OpenDyslexic](https://opendyslexic.org))
-that restyles the whole app — self-hosted so it works offline.
+adjustable text size, an optional monospace practice font, and an optional
+**dyslexia-friendly font** ([OpenDyslexic](https://opendyslexic.org)) that restyles
+the whole app — self-hosted so it works offline.
+
+## Status / not yet done
+
+See the "Open / deferred" section of [`SPEC.md`](./SPEC.md) and the notes in code:
+live cross-device sync (currently local-only + recovery-phrase restore),
+English/other layouts, and the full Czech corpus. (The QWERTZ layout table,
+incl. punctuation and dead keys, is verified against CLDR — see
+`src/data/layout.ts`.)
 
 ## Credits
 
@@ -69,11 +109,10 @@ that restyles the whole app — self-hosted so it works offline.
   [`public/fonts/`](./public/fonts) (latin + latin-ext subsets, variable woff2),
   both under the SIL Open Font License 1.1; see
   [`public/fonts/Inter-Lexend-LICENSE.txt`](./public/fonts/Inter-Lexend-LICENSE.txt).
+- **JetBrains Mono** (optional monospace practice font) — self-hosted in
+  [`public/fonts/`](./public/fonts) under the SIL Open Font License 1.1; see
+  [`public/fonts/JetBrainsMono-LICENSE.txt`](./public/fonts/JetBrainsMono-LICENSE.txt).
 
-## Status / not yet done
+## License
 
-See the "Open / deferred" section of `SPEC.md` and the notes in code:
-live cross-device sync (currently local-only + recovery-phrase restore),
-English/other layouts, and the full Czech corpus. (The QWERTZ layout table,
-incl. punctuation and dead keys, is verified against CLDR — see
-`src/data/layout.ts`.)
+See [`LICENSE`](./LICENSE).
