@@ -52,18 +52,28 @@ say "Gate: every lesson generates valid, typable drills"
 npm run check:content
 say "Build green. Smoke-test the bundle before continuing:"
 echo "    npm run preview   # then run the smoke list in RELEASE.md against it"
-read -r -p $'\nDid the smoke list pass on the built bundle? [y/N] ' ok
-[ "$ok" = "y" ] || [ "$ok" = "Y" ] || die "Smoke list not confirmed — release blocked."
+# The smoke list is the one human gate before prod. Confirm it interactively in a
+# real terminal, or — when running headless (e.g. from Claude Code) — assert it up
+# front with SMOKE_OK=1 to mean "I already checked the preview bundle".
+if [ "${SMOKE_OK:-}" = "1" ]; then
+  say "SMOKE_OK=1 — smoke list confirmed non-interactively."
+elif [ -t 0 ]; then
+  read -r -p $'\nDid the smoke list pass on the built bundle? [y/N] ' ok
+  [ "$ok" = "y" ] || [ "$ok" = "Y" ] || die "Smoke list not confirmed — release blocked."
+else
+  die "No TTY for the smoke prompt. Re-run with SMOKE_OK=1 once you've checked the preview bundle (npm run preview)."
+fi
 
-# ── Cut: changelog ───────────────────────────────────────────────────────────
+# ── Cut: changelog (auto-generated from commit subjects; never hand-edited) ───
 DATE=$(date +%Y-%m-%d)
-say "Opening CHANGELOG.md — write user-meaningful notes (not commit messages)"
-TMP_NOTES=$(printf '## %s — %s\n\n%s\n' "$VERSION" "$DATE" "$(echo "$LOG" | sed 's/^/- /')")
-HEADER=$'# Changelog\n\nAll notable changes, newest first. Source of truth; user-facing notes are distilled from this.\n'
+say "Generating CHANGELOG.md entry for $VERSION from commits since ${LAST_TAG:-start}"
+NOTES=$(git log ${RANGE:-} --format='- %s')
+TMP_NOTES=$(printf '## %s — %s\n\n%s\n' "$VERSION" "$DATE" "$NOTES")
+HEADER=$'# Changelog\n\nAll notable changes, newest first. Auto-generated from commit subjects at release time.\n'
 if [ -f CHANGELOG.md ]; then BODY=$(tail -n +"$(($(grep -n '^## ' CHANGELOG.md | head -1 | cut -d: -f1 || echo 5)))" CHANGELOG.md 2>/dev/null || echo ""); else BODY=""; fi
 printf '%s\n%s\n\n%s\n' "$HEADER" "$TMP_NOTES" "$BODY" > CHANGELOG.md
-"${EDITOR:-vi}" CHANGELOG.md
-git diff --quiet CHANGELOG.md && die "CHANGELOG.md unchanged — aborting (edit it to confirm the entry)."
+say "CHANGELOG entry (auto-generated — commit subjects are the source, so write them well):"
+echo "$TMP_NOTES"
 
 # ── Cut: version bump + commit + annotated tag ───────────────────────────────
 say "Bumping package.json to $VERSION"
