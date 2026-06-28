@@ -1,6 +1,13 @@
 # Changelog
 
-All notable changes, newest first. Source of truth; user-facing notes are distilled from this.
+All notable changes, newest first. Auto-generated from commit subjects at release time.
+
+## 2026.06.3 — 2026-06-28
+
+- build: make release runnable headless (auto-changelog + SMOKE_OK smoke gate)
+- feat: link to the GitHub repo from the app footer (#6)
+- fix: recover from stale/hung lazy chunks instead of wedging the loader (#5)
+- feat: strong OpenGraph previews + rebuilt README
 
 ## 2026.06.2 — 2026-06-27
 
