@@ -1,20 +1,22 @@
-import { lazy, Suspense } from "react";
+import { Suspense } from "react";
 import { EvoluProvider } from "@evolu/react";
 import { evolu } from "./db/evolu";
 import { parseRoute, useRoute } from "./lib/router";
 import { useSettings } from "./ui/settings";
 import { AppShell } from "./components/AppShell";
 import { ReloadPrompt } from "./components/ReloadPrompt";
+import { lazyScreen } from "./lib/lazyScreen";
 // Onboarding + CoursePath are the immediate first views (first-run and the
 // default route), so they stay eager. The rest load on navigation through the
-// existing Suspense boundary, keeping the initial chunk small.
+// existing Suspense boundary, keeping the initial chunk small. lazyScreen adds
+// stale-deploy recovery so a missing/hung chunk can't wedge the loader (#5).
 import { Onboarding } from "./screens/Onboarding";
 import { CoursePath } from "./screens/CoursePath";
-const LessonScreen = lazy(() => import("./screens/LessonScreen").then((m) => ({ default: m.LessonScreen })));
-const Practice = lazy(() => import("./screens/Practice").then((m) => ({ default: m.Practice })));
-const Playground = lazy(() => import("./screens/Playground").then((m) => ({ default: m.Playground })));
-const Weak = lazy(() => import("./screens/Weak").then((m) => ({ default: m.Weak })));
-const Settings = lazy(() => import("./screens/Settings").then((m) => ({ default: m.Settings })));
+const LessonScreen = lazyScreen(() => import("./screens/LessonScreen").then((m) => ({ default: m.LessonScreen })));
+const Practice = lazyScreen(() => import("./screens/Practice").then((m) => ({ default: m.Practice })));
+const Playground = lazyScreen(() => import("./screens/Playground").then((m) => ({ default: m.Playground })));
+const Weak = lazyScreen(() => import("./screens/Weak").then((m) => ({ default: m.Weak })));
+const Settings = lazyScreen(() => import("./screens/Settings").then((m) => ({ default: m.Settings })));
 
 export function App() {
   const route = useRoute();
